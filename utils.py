@@ -17,7 +17,6 @@ import zipfile
 import requests
 
 
-# !!3127784481@$%&"
 
 DATA_DIR = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), "ch3data")

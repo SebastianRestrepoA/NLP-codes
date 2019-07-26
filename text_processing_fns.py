@@ -15,8 +15,17 @@ from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 
 
-def count_words(text):
-    return text.apply(lambda x: len(str(x).split()))
+def count_words(vKnowledgeBase):
+
+    """ This function computes the number of words in each utterance belonging to the knowledge base.
+
+    :param vKnowledgeBase: pandas series with the utterances of the knowledge base.
+
+    :return: pandas series with the number of words used in each utterance.
+
+
+    """
+    return vKnowledgeBase.apply(lambda x: len(str(x).split()))
 
 
 def remove_stopwords(text):
