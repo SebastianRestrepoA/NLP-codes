@@ -28,45 +28,103 @@ def count_words(vKnowledgeBase):
     return vKnowledgeBase.apply(lambda x: len(str(x).split()))
 
 
-def remove_stopwords(text):
+def remove_stopwords(vKnowledgeBase):
 
+    """ This function eliminates the stop words from each utterance belonging to the knowledge base.
+
+    :param vKnowledgeBase: pandas series with the utterances of the knowledge base.
+
+    :return: pandas series with the knowledge base without stop words.
+
+
+    """
     stop = stopwords.words('spanish')
-    return text.apply(lambda x: " ".join(x for x in x.split() if x not in stop))
+    return vKnowledgeBase.apply(lambda x: " ".join(x for x in x.split() if x not in stop))
 
 
-def remove_characters(text):
+def remove_characters(vKnowledgeBase):
 
-    return text.str.replace('[^\w\s]', '')
+    """ This function removes the irrelevant characters from each utterance belonging to the knowledge base.
+
+    :param vKnowledgeBase: pandas series with the utterances of the knowledge base.
+
+    :return: pandas series with the knowledge base without irrelevant characters.
 
 
-def lowercase_transform(text):
+    """
+    return vKnowledgeBase.str.replace('[^\w\s]', '')
 
-    return text.apply(lambda x: " ".join(x.strip().lower() for x in x.split()))
+
+def lowercase_transform(vKnowledgeBase):
+
+    """ This function transforms the utterances belonging to the knowledge base to lowercase.
+
+    :param vKnowledgeBase: pandas series with the utterances of the knowledge base.
+
+    :return: pandas series with the knowledge base transformed to lowercase.
 
 
-def text_lemmatization(text):
+    """
 
-    words = word_tokenize(text)
+    return vKnowledgeBase.apply(lambda x: " ".join(x.strip().lower() for x in x.split()))
+
+
+def text_lemmatization(utterance):
+
+    """ This function apply lemmatization over all the words of a utterance.
+
+    :param utterance: string variable.
+
+    :return: string variable lemmatized.
+
+    """
+
+    words = word_tokenize(utterance)
     lemmatizer = WordNetLemmatizer()
     words_lemma = [lemmatizer.lemmatize(word) for word in words]
 
     return ' '.join(words_lemma)
 
 
-def lemmatization_transform(text):
+def lemmatization_transform(vKnowledgeBase):
 
-    return text.apply(lambda x: text_lemmatization(x))
+    """ This function apply lemmatization in every utterance belonging to the knowledge base.
+
+    :param vKnowledgeBase: pandas series with the utterances of the knowledge base.
+
+    :return: pandas series with lemmatized knowledge base.
 
 
-def stemming_transform(text):
+    """
 
-    return text.apply(lambda x: text_stemming(x))
+    return vKnowledgeBase.apply(lambda x: text_lemmatization(x))
 
 
-def text_stemming(text):
+def stemming_transform(vKnowledgeBase):
+
+    """ This function apply stemming in every utterance belonging to the knowledge base.
+
+    :param vKnowledgeBase: pandas series with the utterances of the knowledge base.
+
+    :return: pandas series with stemmed knowledge base.
+
+    """
+
+    return vKnowledgeBase.apply(lambda x: text_stemming(x))
+
+
+def text_stemming(utterance):
+
+    """ This function apply stemming over all the words of a utterance.
+
+    :param utterance: string variable.
+
+    :return: stemmed string variable.
+
+    """
 
     stemmer = SnowballStemmer("spanish")
-    words = word_tokenize(text)
+    words = word_tokenize(utterance)
     words_stem = [stemmer.stem(word) for word in words]
 
     return ' '.join(words_stem)
