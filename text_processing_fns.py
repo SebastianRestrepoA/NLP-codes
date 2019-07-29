@@ -44,7 +44,8 @@ def remove_stopwords(vKnowledgeBase):
 
 def remove_characters(vKnowledgeBase):
 
-    """ This function removes the irrelevant characters from each utterance belonging to the knowledge base.
+    """ This function removes the irrelevant puntuation characters (!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~)
+    from each utterance belonging to the knowledge base.
 
     :param vKnowledgeBase: pandas series with the utterances of the knowledge base.
 
@@ -102,7 +103,7 @@ def lemmatization_transform(vKnowledgeBase):
 
 def stemming_transform(vKnowledgeBase):
 
-    """ This function apply stemming in every utterance belonging to the knowledge base.
+    """ This function apply stemming function in every utterance belonging to the knowledge base.
 
     :param vKnowledgeBase: pandas series with the utterances of the knowledge base.
 
@@ -156,17 +157,44 @@ def lexical_diversity(text):
 
 
 def extract_bigrams(utterance):
+
+    """ This function produces bigrams list given a utterance.
+
+    :param utterance: string variable.
+
+    :return: list variable with the bigrams obtained from the input utterance.
+
+    """
     utterance = utterance.split()
     return list(nltk.bigrams(utterance))
 
 
 def extract_trigrams(utterance):
+
+    """ This function produces trigrams list given a utterance.
+
+    :param utterance: string variable.
+
+    :return: list variable with the bigrams obtained from the input utterance.
+    """
+
     utterance = utterance.split()
     return list(nltk.trigrams(utterance))
 
 
-def intent_bigrams_frequency(utterances, intent_name):
-    b = utterances.apply(lambda x: extract_bigrams(x))
+def intent_bigrams_frequency(vKnowledgeBase, intent_name):
+
+    """ This function computes the frequency of bigrams in the knowledge base of specific intent.
+
+
+    :param vKnowledgeBase: pandas series with the utterances of knowledge base.
+           intent_name: string variable with the name of the intent in analysis.
+
+    :return: pandas dataframe with the frequency of the bigrams in the knowledge base.
+
+
+    """
+    b = vKnowledgeBase.apply(lambda x: extract_bigrams(x))
     b = b.reset_index(drop=True)
     a = b[0]
     for i in range(1, len(b)):
@@ -174,12 +202,24 @@ def intent_bigrams_frequency(utterances, intent_name):
 
     fdist = nltk.FreqDist(a)
     df = pd.DataFrame(fdist.items(), columns=['Bigrams', intent_name])
-    df = df.sort_values(by=[intent_name], ascending=False).set_index('Bigrams')
-    return df
+
+    return df.sort_values(by=[intent_name], ascending=False).set_index('Bigrams')
 
 
-def intent_trigrams_frequency(utterances, intent_name):
-    tri = utterances.apply(lambda x: extract_trigrams(x))
+def intent_trigrams_frequency(vKnowledgeBase, intent_name):
+
+    """ This function computes the frequency of trigrams in the knowledge base of specific intent.
+
+
+    :param vKnowledgeBase: pandas series with the utterances of knowledge base.
+           intent_name: string variable with the name of the intent in analysis.
+
+    :return: pandas dataframe with the frequency of the trigrams in the knowledge base.
+
+
+    """
+
+    tri = vKnowledgeBase.apply(lambda x: extract_trigrams(x))
     tri = tri.reset_index(drop=True)
     a = tri[0]
     for i in range(1, len(tri)):
@@ -187,8 +227,92 @@ def intent_trigrams_frequency(utterances, intent_name):
 
     fdist = nltk.FreqDist(a)
     df = pd.DataFrame(fdist.items(), columns=['Trigrams', intent_name])
-    df = df.sort_values(by=[intent_name], ascending=False).set_index('Trigrams')
-    return df
+    return df.sort_values(by=[intent_name], ascending=False).set_index('Trigrams')
+
+
+def fn_calculate_word_frequency_per_intents(path, delete_stop_word=False, stemming=False, lemmatization=False,
+                                            delete_characters=False, generate_excel=False):
+
+    """ This function computes the words, bigrams and trigrams frequency of the knowledge base.
+
+
+    :param path: string variable with local path where is saved the knowledge base.
+           delete_stop_word: this option removes stop words of the knowledge base. Default False
+           stemmming: this option applies stemming function over the knowledge base. Default False
+           lemmatization: this option applies lemmatization function over the knowledge base. Default False
+           delete_characters: this option deletes irrelevant puntuation characters over the knowledge base.
+           Default False
+           generate_excel: this option generates a excel file with the words, bigrams and trigrams frequency of the
+           knowledge base. Default False
+
+    :return: pandas dataframe with the words frequency of the knowledge base.
+
+
+    """
+
+    df = pd.read_excel(path)
+    intent = df["Intent"]
+    unique_intent = list(set(intent))
+
+    # df["Utterance"] = df["Utterance"].apply(lambda row: row.strip().lower())
+
+    # transform our text information in lowercase
+    df["Utterance"] = lowercase_transform(df["Utterance"])
+
+    if delete_characters:
+        # Removing punctuation characters such as: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+        df["Utterance_free_characters"] = remove_characters(df["Utterance_lower"])
+
+    if delete_stop_word:
+        # Removing stop words from text
+        df["Utterance"] = remove_stopwords(df["Utterance"])
+
+    if stemming:
+        df["Utterance"] = stemming_transform(df["Utterance"])
+
+    if lemmatization:
+        df["Utterance"] = lemmatization_transform(df["Utterance"])
+
+    lex_diversity = []
+
+    df_old = []
+    df_bigrams = []
+    df_trigrams = []
+
+    for idx, i in enumerate(unique_intent):
+
+        if idx == 0:
+            df_bigrams = intent_bigrams_frequency(df["Utterance"][df["Intent"] == i], i)
+            df_trigrams = intent_trigrams_frequency(df["Utterance"][df["Intent"] == i], i)
+            df_old = words_frequency(df['Utterance'][df["Intent"] == i].str.cat(sep=' '), i, plot=False)
+        else:
+            df_bigrams_new = intent_bigrams_frequency(df["Utterance"][df["Intent"] == i], i)
+            df_trigrams_new = intent_trigrams_frequency(df["Utterance"][df["Intent"] == i], i)
+            df_new = words_frequency(df['Utterance'][df["Intent"] == i].str.cat(sep=' '), i, plot=False)
+
+            df_old = pd.concat((df_old, df_new), axis=1)
+            df_bigrams = pd.concat((df_bigrams, df_bigrams_new), axis=1)
+            df_trigrams = pd.concat((df_trigrams, df_trigrams_new), axis=1)
+
+        lex_diversity.append(lexical_diversity(df['Utterance'][df["Intent"] == i].str.cat(sep=' ')))
+
+    df_final = df_old.fillna(0).sort_values(by=unique_intent, ascending=False)
+    bigrams_final = df_bigrams.fillna(0).sort_values(by=unique_intent, ascending=False)
+    trigrams_final = df_trigrams.fillna(0).sort_values(by=unique_intent, ascending=False)
+    df_lexical = pd.DataFrame(data=lex_diversity, index=df_final.columns, columns=['% distinct words'])
+    df_lexical = df_lexical.sort_values(by=['% distinct words'], ascending=False)
+    # df_final.style.apply(color_max_row, axis=1, subset=unique_intent)
+
+    if generate_excel:
+        excel_name = input('Indique el nombre del dominio de conocimiento del excel a generar: ')
+        writer = pd.ExcelWriter('Word frequency of ' + excel_name + '.xlsx', engine='xlsxwriter')
+        df_final.to_excel(writer, sheet_name='word frequency')
+        df_lexical.to_excel(writer, sheet_name='lexical diversity')
+        bigrams_final.to_excel(writer, sheet_name='bigrams frequency')
+        trigrams_final.to_excel(writer, sheet_name='trigrams frequency')
+        writer.save()
+
+    return df_final
 
 
 def feature_engineering(x):
@@ -219,35 +343,6 @@ def feature_engineering(x):
     features['ngram'] = {'object': tfidf_vect_ngram, 'matrix': x_tfidf_ngram}
 
     return features
-
-
-def create_nn_model_architecture(input_size):
-    # create input layer
-    input_layer = layers.Input((input_size,), sparse=True)
-
-    # create hidden layer
-    hidden_layer = layers.Dense(100, activation="relu")(input_layer)
-
-    # create output layer
-    output_layer = layers.Dense(11, activation="sigmoid")(hidden_layer)
-
-    classifier = models.Model(inputs=input_layer, outputs=output_layer)
-    classifier.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
-    return classifier
-
-def color_max_row(row):
-    return ['background-color: red' if x > 3 else 'background-color: yellow' for x in row]
-
-
-def row_f1Score_color(row):
-    # vResult = vResult.style.apply(ro_f1Score_color, axis=1)
-
-    if (row["f1-score"] >= 0.85):
-        return pd.Series('background-color: #41DF26', row.index)
-    elif (row["f1-score"] < 0.7):
-        return pd.Series('background-color: red', row.index)
-    else:
-        return pd.Series('background-color: yellow', row.index)
 
 
 def fn_calculate_total_utterances_per_intent(path, plot=False):
@@ -324,72 +419,6 @@ def fn_calculate_total_utterances_per_domains(path, plot=False):
 
     return result
 
-
-def fn_calculate_word_frequency_per_intents(path, delete_stop_word=False, stemming=False, lemmatization=False,
-                                            delete_characters=False, generate_excel=False):
-    df = pd.read_excel(path)
-    intent = df["Intent"]
-    unique_intent = list(set(intent))
-
-    # df["Utterance"] = df["Utterance"].apply(lambda row: row.strip().lower())
-
-    # transform our text information in lowercase
-    df["Utterance"] = lowercase_transform(df["Utterance"])
-
-    if delete_characters:
-        # Removing punctuation characters such as: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
-        df["Utterance_free_characters"] = remove_characters(df["Utterance_lower"])
-
-    if delete_stop_word:
-        # Removing stop words from text
-        df["Utterance"] = remove_stopwords(df["Utterance"])
-
-    if stemming:
-        df["Utterance"] = stemming_transform(df["Utterance"])
-
-    if lemmatization:
-        df["Utterance"] = lemmatization_transform(df["Utterance"])
-
-    lex_diversity = []
-
-    df_old = []
-    df_bigrams = []
-    df_trigrams = []
-
-    for idx, i in enumerate(unique_intent):
-
-        if idx == 0:
-            df_bigrams = intent_bigrams_frequency(df["Utterance"][df["Intent"] == i], i)
-            df_trigrams = intent_trigrams_frequency(df["Utterance"][df["Intent"] == i], i)
-            df_old = words_frequency(df['Utterance'][df["Intent"] == i].str.cat(sep=' '), i, plot=False)
-        else:
-            df_bigrams_new = intent_bigrams_frequency(df["Utterance"][df["Intent"] == i], i)
-            df_trigrams_new = intent_trigrams_frequency(df["Utterance"][df["Intent"] == i], i)
-            df_new = words_frequency(df['Utterance'][df["Intent"] == i].str.cat(sep=' '), i, plot=False)
-
-            df_old = pd.concat((df_old, df_new), axis=1)
-            df_bigrams = pd.concat((df_bigrams, df_bigrams_new), axis=1)
-            df_trigrams = pd.concat((df_trigrams, df_trigrams_new), axis=1)
-
-        lex_diversity.append(lexical_diversity(df['Utterance'][df["Intent"] == i].str.cat(sep=' ')))
-
-    df_final = df_old.fillna(0).sort_values(by=unique_intent, ascending=False)
-    bigrams_final = df_bigrams.fillna(0).sort_values(by=unique_intent, ascending=False)
-    trigrams_final = df_trigrams.fillna(0).sort_values(by=unique_intent, ascending=False)
-    df_lexical = pd.DataFrame(data=lex_diversity, index=df_final.columns, columns=['% distinct words'])
-    df_lexical = df_lexical.sort_values(by=['% distinct words'], ascending=False)
-    # df_final.style.apply(color_max_row, axis=1, subset=unique_intent)
-
-    if generate_excel:
-        excel_name = input('Indique el nombre del dominio de conocimiento del excel a generar: ')
-        writer = pd.ExcelWriter('Word frequency of ' + excel_name + '.xlsx', engine='xlsxwriter')
-        df_final.to_excel(writer, sheet_name='word frequency')
-        df_lexical.to_excel(writer, sheet_name='lexical diversity')
-        bigrams_final.to_excel(writer, sheet_name='bigrams frequency')
-        trigrams_final.to_excel(writer, sheet_name='trigrams frequency')
-        writer.save()
-
-    return df_final
 
 
 def get_word_frequency(df_wordfreq, utterance, real_intent, pred_intent):
@@ -534,3 +563,33 @@ def fn_utterances_similarity_two_docs(path_doc1, path_doc2, output_file_name):
     writer = pd.ExcelWriter('utterances_No_agregadas.xlsx', engine='xlsxwriter')
     new_doc.to_excel(writer, index=False)
     writer.save()
+
+
+def create_nn_model_architecture(input_size):
+    # create input layer
+    input_layer = layers.Input((input_size,), sparse=True)
+
+    # create hidden layer
+    hidden_layer = layers.Dense(100, activation="relu")(input_layer)
+
+    # create output layer
+    output_layer = layers.Dense(11, activation="sigmoid")(hidden_layer)
+
+    classifier = models.Model(inputs=input_layer, outputs=output_layer)
+    classifier.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
+    return classifier
+
+
+def color_max_row(row):
+    return ['background-color: red' if x > 3 else 'background-color: yellow' for x in row]
+
+
+def row_f1Score_color(row):
+    # vResult = vResult.style.apply(ro_f1Score_color, axis=1)
+
+    if (row["f1-score"] >= 0.85):
+        return pd.Series('background-color: #41DF26', row.index)
+    elif (row["f1-score"] < 0.7):
+        return pd.Series('background-color: red', row.index)
+    else:
+        return pd.Series('background-color: yellow', row.index)
