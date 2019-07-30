@@ -23,5 +23,4 @@ vPathSuccesFailFile = 'C:/Users/Administrator/Documents/CHATBOT SOFY/Hipotecario
 
 fn_word_frequency_analysis_fail_utterances(vPathKnowledgeBase, vPathSuccesFailFile)
 
-print()
 
