@@ -7,11 +7,11 @@ from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 # from sklearn import preprocessing
 import nltk
-import  numpy as np
-# from keras.preprocessing import text, sequence
+import numpy as np
 from keras import layers, models, optimizers
 from sklearn.metrics.pairwise import cosine_similarity
 from matplotlib import rcParams
+from utils import *
 rcParams.update({'figure.autolayout': True})
 
 
@@ -133,6 +133,16 @@ def text_stemming(utterance):
 
 def words_frequency(text, intent_name, plot=False):
 
+    """ This function computes word frequency of a text.
+
+    :param text: string variable with all concatenated utterances of a specific intent of the knowledge base.
+           intent_name: string variable with the intent name in analysis.
+           plot: this option allows to graph the frequency distribution of the words. Default, False
+
+    :return: pandas dataframe variable with the frequency of every word in the knowledge base.
+
+    """
+
     # break the string into list of words
     text_list = text.split()
 
@@ -152,6 +162,14 @@ def words_frequency(text, intent_name, plot=False):
 
 
 def lexical_diversity(text):
+
+    """ This function  calculates lexical richness of a text.
+
+    :param text: string variable.
+
+    :return: float variable with the percentage of lexical diversity of the text in analysis.
+
+    """
     text = text.split()
     return (len(set(text)) / len(text))*100
 
@@ -233,7 +251,7 @@ def intent_trigrams_frequency(vKnowledgeBase, intent_name):
 def fn_calculate_word_frequency_per_intents(path, delete_stop_word=False, stemming=False, lemmatization=False,
                                             delete_characters=False, generate_excel=False):
 
-    """ This function computes the words, bigrams and trigrams frequency of the knowledge base.
+    """ This function computes the frequency of words, bigrams and trigrams in every intent of the knowledge base.
 
 
     :param path: string variable with local path where is saved the knowledge base.
@@ -315,6 +333,43 @@ def fn_calculate_word_frequency_per_intents(path, delete_stop_word=False, stemmi
     return df_final
 
 
+def fn_word_frequency_analysis_fail_utterances(vPathKnowledgeBase, vPathSuccesFailFile):
+
+    """ This function analyses the utterances that were not recognized by the machine learning model.
+     It compares how many times is each word of the fail utterances in both the real and predict intent.
+
+      :param vPathKnowledgeBase: string variable with local path where is saved the knowledge base (.xlsx file).
+             vPathSuccesFailFile: string variable with local path where is saved success fail confidence file.
+
+
+      :return: excel file with word frequency analysis over the utterances that were not recognized by
+               machine learning model.
+
+      """
+
+    word_frequency = fn_calculate_word_frequency_per_intents(vPathKnowledgeBase)
+
+    df_fail_groups = pd.read_excel(vPathSuccesFailFile, sheet_name='fail_groups').sort_values(by=['score'],
+                                                                                              ascending=False)
+
+    intents = list(set(df_fail_groups['real_intent']))
+    writer = pd.ExcelWriter('word_frequency_fail_utterances.xlsx', engine='xlsxwriter')
+
+    for intent in intents:
+
+        intent_fail = df_fail_groups[df_fail_groups['real_intent'] == intent].reset_index()
+
+        all_tables = []
+        for i in range(0, len(intent_fail)):
+
+            all_tables.append(get_word_frequency(word_frequency, intent_fail['utterance'][i], intent_fail['real_intent'][i],
+                                                 intent_fail['pred_intent'][i]))
+
+        multiple_dfs_to_excel(all_tables, writer, intent[:10], 2)
+
+    writer.save()
+
+
 def feature_engineering(x):
 
     features = {}
@@ -324,7 +379,7 @@ def feature_engineering(x):
     # create a count vectorizer object
     count_vect = CountVectorizer(analyzer='word')
     count_vect.fit(x) # Create a vocabulary from all utterances
-    x_count = count_vect.transform(x) # Count how many times is each word from each utterance in the vocabulary.
+    x_count = count_vect.transform(x)  # Count how many times is each word from each utterance in the vocabulary.
     features['count_vectorizer'] = {'object': count_vect, 'matrix': x_count}
     # pd.DataFrame(x_count.toarray(), columns=count_vect.get_feature_names())
 
@@ -418,7 +473,6 @@ def fn_calculate_total_utterances_per_domains(path, plot=False):
             plt.show()
 
     return result
-
 
 
 def get_word_frequency(df_wordfreq, utterance, real_intent, pred_intent):

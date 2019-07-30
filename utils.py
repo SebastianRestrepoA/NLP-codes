@@ -12,18 +12,16 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn import preprocessing
 from sklearn.metrics import classification_report
-from text_processing_fns import get_jaccard_sim
 import zipfile
 import requests
 
 
-
-DATA_DIR = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)), "ch3data")
-
-if not os.path.exists(DATA_DIR):
-    print("Uh, we were expecting a data directory, which contains the toy data")
-    sys.exit(1)
+# DATA_DIR = os.path.join(
+#     os.path.dirname(os.path.realpath(__file__)), "ch3data")
+#
+# if not os.path.exists(DATA_DIR):
+#     print("Uh, we were expecting a data directory, which contains the toy data")
+#     sys.exit(1)
 
 
 def dist_raw(v1, v2):
@@ -119,10 +117,6 @@ def metrics_mean(df_results, intent_names, measure):
             results[idx_int, 1] = np.std(df_results.loc[intent]['f1-score'])
 
     return pd.DataFrame(results, index=intent_names, columns=metrics_names)
-
-
-def lexical_diversity(text):
-    return len(set(text)) / len(text)
 
 
 ## ONGOING TRAINING
