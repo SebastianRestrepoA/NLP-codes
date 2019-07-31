@@ -365,44 +365,24 @@ def fn_word_frequency_analysis_fail_utterances(vPathKnowledgeBase, vPathSuccesFa
             all_tables.append(get_word_frequency(word_frequency, intent_fail['utterance'][i], intent_fail['real_intent'][i],
                                                  intent_fail['pred_intent'][i]))
 
-        multiple_dfs_to_excel(all_tables, writer, intent[:10], 2)
+        multiple_dfs_to_excel(all_tables, writer, intent[:17], 5)
 
     writer.save()
 
 
-def feature_engineering(x):
+def fn_calculate_total_utterances_per_intent(vPathKnowledgeBase, plot=False):
 
-    features = {}
-    x.index = range(0, len(x))
-
-    # transform the training data using count vectorizer object
-    # create a count vectorizer object
-    count_vect = CountVectorizer(analyzer='word')
-    count_vect.fit(x) # Create a vocabulary from all utterances
-    x_count = count_vect.transform(x)  # Count how many times is each word from each utterance in the vocabulary.
-    features['count_vectorizer'] = {'object': count_vect, 'matrix': x_count}
-    # pd.DataFrame(x_count.toarray(), columns=count_vect.get_feature_names())
-
-    # word level tf-idf
-
-    " TF-IDF score represents the relative importance of a term in the document and the entire corpus. "
-    tfidf_vect = TfidfVectorizer(analyzer='word', max_features=5000)  # token_pattern=r'\w{1,}'
-    tfidf_vect.fit(x)
-    x_tfidf = tfidf_vect.transform(x)
-    features['TF-IDF'] = {'object': tfidf_vect, 'matrix': x_tfidf}
-
-    # ngram level tf-idf
-    tfidf_vect_ngram = TfidfVectorizer(analyzer='word', ngram_range=(2, 3), max_features=5000) # token_pattern=r'\w{1,}'
-    tfidf_vect_ngram.fit(x)
-    x_tfidf_ngram = tfidf_vect_ngram.transform(x)
-    features['ngram'] = {'object': tfidf_vect_ngram, 'matrix': x_tfidf_ngram}
-
-    return features
+    """ This function computes the total of utterances per intent (or class) of the knowledge base.
 
 
-def fn_calculate_total_utterances_per_intent(path, plot=False):
+    :param vPathKnowledgeBase: string variable with local path where is saved the knowledge base (.xlsx file)
+           plot: boolean variable to make a horizontal bar plot with the total of utterances per intent. Default False.
 
-    df = pd.read_excel(path)
+    :return: pandas dataframe with the total of utterances per intent of the knowledge base.
+
+    """
+
+    df = pd.read_excel(vPathKnowledgeBase)
 
     intent_names = df['Intent'].unique()
     result = []
@@ -410,13 +390,10 @@ def fn_calculate_total_utterances_per_intent(path, plot=False):
     for intent in intent_names:
 
         df_intent = df[df['Intent'] == intent]
-        df_ong = []
-
-        for ong in df['ongoing'].unique():
-            df_ong.append(len(df_intent[df_intent['ongoing'] == ong]))
-
+        df_ong = [len(df_intent[df_intent['ongoing'] == ong]) for ong in df['ongoing'].unique()]
         result.append(df_ong)
-    result = pd.DataFrame(result, index=intent_names, columns=['Training', 'Reto 1', 'Reto 2', 'Reto 3'])
+
+    result = pd.DataFrame(result, index=intent_names, columns=['ongoing ' + str(i) for i in df['ongoing'].unique()])
     result['Total'] = result.sum(axis=1)
 
     result = result.sort_values(by='Total', ascending=False)
@@ -436,43 +413,32 @@ def fn_calculate_total_utterances_per_intent(path, plot=False):
     return result
 
 
-def fn_calculate_total_utterances_per_domains(path, plot=False):
+def fn_calculate_total_utterances_tagged(vPathTaggedFile):
 
-    df = pd.read_excel(path)
+    """ This function computes the total of tagged utterances per intents of each domain.
 
-    for domain in ['cesantias', 'office']:
 
-        df_domain = df[df['Dominio']==domain]
-        intent_names = df_domain['Intent'].unique()
-        result = []
+    :param vPathTaggedFile: string variable with local path where is saved the tagged file (.xlsx file)
 
-        for intent in intent_names:
+    :return: dictionary with the total of utterances per domain.
 
-            df_intent = df[df['Intent'] == intent]
-            df_ong = []
+    """
 
-            for ong in df['ongoing'].unique():
-                df_ong.append(len(df_intent[df_intent['ongoing'] == ong]))
+    vTaggedFile = pd.read_excel(vPathTaggedFile)
 
-            result.append(df_ong)
-        result = pd.DataFrame(result, index=intent_names, columns=['Reto 1', 'Reto 2', 'Reto 3'])
-        result['Total'] = result.sum(axis=1)
+    vResult = {}
 
-        result = result.sort_values(by='Total', ascending=False)
+    for domain_name in vTaggedFile['Dominio'].unique():
 
-        if plot:
+        vDomainData = vTaggedFile[vTaggedFile['Dominio'] == domain_name]
 
-            ax = result.drop('Total', axis=1).plot(kind='barh', stacked=True)
-            ax.set_xlabel("Number of Utterances")
-            ax.set_title('Total of Utterances in the Knowledge Base')
-            ax.set_xticks(range(0, result.max().max()+5, 5))
+        vIntentData = [len(vDomainData[vDomainData['Intent'] == intent]) for intent in vDomainData['Intent'].unique()]
 
-            for tick in ax.get_xticks():
-                ax.axvline(x=tick, linestyle='dashed', alpha=0.4, color='#eeeeee', zorder=1)
+        vResult[domain_name] = pd.DataFrame(vIntentData, index=vDomainData['Intent'].unique(),
+                                            columns=['Total utterances tagged']).sort_values(by='Total utterances tagged'
+                                                                                             , ascending=False)
 
-            plt.show()
-
-    return result
+    return vResult
 
 
 def get_word_frequency(df_wordfreq, utterance, real_intent, pred_intent):
@@ -499,58 +465,6 @@ def get_vectors(strs):
 def get_cosine_sim(strs):
     vectors = [t for t in get_vectors(strs)]
     return cosine_similarity(vectors)
-
-
-def fn_utterances_similarity_per_intent(path, threshold):
-
-    df = pd.read_excel(path)
-
-    df['Utterance'] = lowercase_transform(df['Utterance'])
-    intents = list(set(df['Intent']))
-
-    writer = pd.ExcelWriter('similitud por intencion1.xlsx')
-
-    for intent in intents:
-
-        try:
-
-            a = df[df['Intent'] == intent].reset_index()
-            a = a[['Utterance', 'ongoing', 'index']]
-
-            jaccard_matrix = np.zeros((len(a['Utterance']), len(a['Utterance'])))
-
-            for idx, utterance in enumerate(list(a['Utterance'])):
-
-                jaccard_matrix[:, idx] = a['Utterance'].apply(lambda x: get_jaccard_sim(utterance, x))
-
-            cosine_matrix = get_cosine_sim(list(a['Utterance']))
-
-            df_final = []
-
-            for idx in range(0, a.shape[0]):
-
-                idx_utterances = np.where((jaccard_matrix[:, idx] > threshold) == 1)
-                idx_utterances = idx_utterances[0][idx+1:]
-                utterances_selected = a.iloc[idx_utterances].reset_index(drop=True)
-                utterance_to_compare = pd.DataFrame([a.iloc[idx, 0]]*utterances_selected.shape[0], columns=['To compare'])
-                jaccard_data = pd.DataFrame(jaccard_matrix[idx_utterances, idx], columns=['Jaccard'])
-                cosine_data = pd.DataFrame(cosine_matrix[idx_utterances, idx], columns=['Cosine'])
-
-                if utterances_selected is not None:
-
-                    df_contenated = pd.concat((utterance_to_compare, utterances_selected, jaccard_data, cosine_data), axis=1)\
-                        .sort_values(by='Jaccard', ascending=False)
-                    df_final.append(df_contenated[['To compare', 'Utterance', 'Jaccard', 'Cosine', 'index', 'ongoing']])
-
-            df_final = pd.concat(df_final)
-            df_final.to_excel(writer, sheet_name=intent[:10])
-        except:
-
-            print('¡¡¡ Danger !!!: a problem has ocurred with the intent: ' + intent)
-
-    print('Similarity per intent have finished')
-
-    writer.save()
 
 
 def fn_utterances_similarity_between_intents(path, threshold, output_file_name):
@@ -633,17 +547,32 @@ def create_nn_model_architecture(input_size):
     classifier.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
     return classifier
 
+def feature_engineering(x):
 
-def color_max_row(row):
-    return ['background-color: red' if x > 3 else 'background-color: yellow' for x in row]
+    features = {}
+    x.index = range(0, len(x))
 
+    # transform the training data using count vectorizer object
+    # create a count vectorizer object
+    count_vect = CountVectorizer(analyzer='word')
+    count_vect.fit(x) # Create a vocabulary from all utterances
+    x_count = count_vect.transform(x)  # Count how many times is each word from each utterance in the vocabulary.
+    features['count_vectorizer'] = {'object': count_vect, 'matrix': x_count}
+    # pd.DataFrame(x_count.toarray(), columns=count_vect.get_feature_names())
 
-def row_f1Score_color(row):
-    # vResult = vResult.style.apply(ro_f1Score_color, axis=1)
+    # word level tf-idf
 
-    if (row["f1-score"] >= 0.85):
-        return pd.Series('background-color: #41DF26', row.index)
-    elif (row["f1-score"] < 0.7):
-        return pd.Series('background-color: red', row.index)
-    else:
-        return pd.Series('background-color: yellow', row.index)
+    " TF-IDF score represents the relative importance of a term in the document and the entire corpus. "
+    tfidf_vect = TfidfVectorizer(analyzer='word', max_features=5000)  # token_pattern=r'\w{1,}'
+    tfidf_vect.fit(x)
+    x_tfidf = tfidf_vect.transform(x)
+    features['TF-IDF'] = {'object': tfidf_vect, 'matrix': x_tfidf}
+
+    # ngram level tf-idf
+    tfidf_vect_ngram = TfidfVectorizer(analyzer='word', ngram_range=(2, 3), max_features=5000) # token_pattern=r'\w{1,}'
+    tfidf_vect_ngram.fit(x)
+    x_tfidf_ngram = tfidf_vect_ngram.transform(x)
+    features['ngram'] = {'object': tfidf_vect_ngram, 'matrix': x_tfidf_ngram}
+
+    return features
+

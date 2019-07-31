@@ -556,4 +556,16 @@ def fn_sofy_response(vEndPoints, autoring_key, utterance):
 
     return pd.concat(utterance_path, axis=1)
 
+def color_max_row(row):
+    return ['background-color: red' if x > 3 else 'background-color: yellow' for x in row]
 
+
+def row_f1Score_color(row):
+    # vResult = vResult.style.apply(ro_f1Score_color, axis=1)
+
+    if (row["f1-score"] >= 0.85):
+        return pd.Series('background-color: #41DF26', row.index)
+    elif (row["f1-score"] < 0.7):
+        return pd.Series('background-color: red', row.index)
+    else:
+        return pd.Series('background-color: yellow', row.index)
