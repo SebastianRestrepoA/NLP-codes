@@ -448,9 +448,17 @@ def get_word_frequency(df_wordfreq, utterance, real_intent, pred_intent):
     return df_wordfreq.loc[words, [real_intent, pred_intent]]
 
 
-def get_jaccard_sim(str1, str2):
-    a = set(str1.split())
-    b = set(str2.split())
+def get_jaccard_sim(vStr1, vStr2):
+
+    """ This function computes the jaccard similarity coefficient between two utterances (or strings).
+
+    :param vStr1: string variable.
+           vStr2: string variable.
+    :return float variable with the jaccard similarity coefficient.
+
+    """
+    a = set(vStr1.split())
+    b = set(vStr2.split())
     c = a.intersection(b)
     return float(len(c)) / (len(a) + len(b) - len(c))
 
@@ -462,16 +470,34 @@ def get_vectors(strs):
     return vectorizer.transform(text).toarray()
 
 
-def get_cosine_sim(strs):
-    vectors = [t for t in get_vectors(strs)]
+def get_cosine_sim(vUtterancesKnowledgeBase):
+
+    """ This function computes the cosine similarity between the utterances of the knowledge base.
+
+    :param vUtterancesKnowledgeBase: list variable with the utterances of the knowledge base (.xlsx file)
+
+    :return ndarray matrix with the cosine similarity estimated from the knowledge base.
+
+    """
+
+    vectors = [t for t in get_vectors(vUtterancesKnowledgeBase)]
     return cosine_similarity(vectors)
 
 
-def fn_utterances_similarity_between_intents(path, threshold, output_file_name):
+def fn_utterances_similarity_between_intents(vPathKnowledgeBase, vThreshold, output_file_name):
+
+    """ This function computes the jaccard and cosine similarity index between the utterances of the knowledge base and
+     it generates a excel file with the utterances that achieved an jaccard index above setted threshold.
+
+
+    :param vPathKnowledgeBase: string variable with local path where is saved the knowledge base (.xlsx file)
+           vThreshold: float variable used to filter the utterances with similarity above of this number.
+
+    """
 
     writer = pd.ExcelWriter(output_file_name + '.xlsx')
 
-    df = pd.read_excel(path)
+    df = pd.read_excel(vPathKnowledgeBase)
 
     df['Utterance'] = lowercase_transform(df['Utterance'])
     df = df.reset_index()
@@ -487,7 +513,7 @@ def fn_utterances_similarity_between_intents(path, threshold, output_file_name):
 
     for idx in range(0, df.shape[0]):
 
-        idx_utterances = np.where((jaccard_matrix[idx+1:, idx] > threshold) == 1)
+        idx_utterances = np.where((jaccard_matrix[idx+1:, idx] > vThreshold) == 1)
         idx_utterances = idx_utterances[0]+idx+1
         utterances_selected = df.iloc[idx_utterances].reset_index(drop=True)
         utterance_to_compare = pd.DataFrame([df['Utterance'][idx]] * utterances_selected.shape[0],
@@ -546,6 +572,7 @@ def create_nn_model_architecture(input_size):
     classifier = models.Model(inputs=input_layer, outputs=output_layer)
     classifier.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
     return classifier
+
 
 def feature_engineering(x):
 
