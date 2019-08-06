@@ -16,14 +16,6 @@ import zipfile
 import requests
 
 
-# DATA_DIR = os.path.join(
-#     os.path.dirname(os.path.realpath(__file__)), "ch3data")
-#
-# if not os.path.exists(DATA_DIR):
-#     print("Uh, we were expecting a data directory, which contains the toy data")
-#     sys.exit(1)
-
-
 def dist_raw(v1, v2):
     delta = v1-v2
     return sp.linalg.norm(delta.toarray())
@@ -139,7 +131,7 @@ def multiple_dfs_to_excel(df_list, writer, sheets, spaces):
     # writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
     row = 0
     for dataframe in df_list:
-        dataframe.to_excel(writer,sheet_name=sheets, startrow=row , startcol=0)
+        dataframe.to_excel(writer, sheet_name=sheets, startrow=row , startcol=0)
         row = row + len(dataframe.index) + spaces + 1
 
 
@@ -172,6 +164,13 @@ def fn_get_intents_from_df(vData):
 
 
 def fn_add_LuisAnswer_columns(row):
+
+    """ This function organize the logs answers....
+
+    :param row: pandas series with the logs collected from one iteration.
+
+    :return: pandas series with the logs reorganized.
+    """
     vJson = json.loads(row['LuisAnswer'])
     row['IntentRecognized_1'] = vJson['intents'][0]['intent']
     row['Score_1'] = vJson['intents'][0]['score']
@@ -196,7 +195,22 @@ def fn_match_entity_tagged(row):
     return row
 
 
-def fn_generate_tagger_file(vLogsPath, appsID,vKnowledgeBasePaths, vNoAddPaths, saveFlag):
+def fn_generate_tagger_file(vLogsPath, appsID, vKnowledgeBasePaths, vNoAddPaths):
+
+    """ This function ....
+
+    :param vLogsPath: string variable with local path where is saved .xlsx file with the logs collected from production.
+           appsID: dictionary variable with the IDs of the applications in production.
+           vKnowledgeBasePaths: dictionary variable with the paths where are saved the knowledge bases of the
+           applications in production.
+           vNoAddPaths: dictionary variable with the paths where are saved the utterances that were not add to the
+           knowledge bases in production.
+
+
+    :return:
+
+
+    """
 
     if vLogsPath.split('.')[-1] == 'xlsx':
         vLogsDataFrame = pd.read_excel(vLogsPath)
@@ -230,10 +244,29 @@ def fn_generate_tagger_file(vLogsPath, appsID,vKnowledgeBasePaths, vNoAddPaths, 
     vTaggerDataFrame = vRouterDataFrame.merge(vChildsDataFrame, on='Utterance', how='outer', indicator=True)
     vTaggerDataFrame = vTaggerDataFrame.dropna(axis=0, subset=['Utterance'])
 
-    fn_generate_drop_down_lists(vTaggerDataFrame, vKnowledgeBasePaths, vNoAddPaths, vLogsPath, saveFlag=True)
+    fn_generate_drop_down_lists(vTaggerDataFrame, vKnowledgeBasePaths, vNoAddPaths, vLogsPath)
 
 
-def fn_generate_drop_down_lists(df_tagger, vPaths, vNoAddPaths, vLogsPath, saveFlag=True):
+def fn_generate_drop_down_lists(df_tagger, vPaths, vNoAddPaths, vLogsPath):
+
+    """ This function generates drop down lists based on the intents of the knowledge bases in production.
+
+
+    :param df_tagger: pandas dataframe with the utterances collected from production.
+    :param vPaths: dictionary variable with the paths where are saved the knowledge bases of the
+           applications in production
+    :param vNoAddPaths: dictionary variable with the paths where are saved the utterances that were not add to the
+           knowledge bases in production.
+    :param vLogsPath: string variable e with local path where is saved .xlsx file with the logs collected from
+           production
+
+    :returns excel file called tagger with the utterances to be tagged through drop down lists of each domain.
+             excel file called tagger hide with the intents recognized by Luis for every utterance collected.
+             excel file called merge auto tagger with the intents recognized by Luis for every utterance collected and
+             the real intent obtained from the knowledge bases. This file saves the utterances that were collected
+             in production and they are in the knowledge base.
+
+    """
 
     intents_names = {}
     utterances_knowledge_base = []
@@ -253,16 +286,16 @@ def fn_generate_drop_down_lists(df_tagger, vPaths, vNoAddPaths, vLogsPath, saveF
     idx = utterances_knowledge_base['Utterance'].isin(df_tagger['Utterance'])
     vAutoTagger = pd.concat([pd.Series(), utterances_knowledge_base[idx], pd.Series()], axis=1)
     vAutoTagger.columns = ['ASK', 'Dominio', 'Intent', 'Utterance', '@entity_name, value, synonym']
+
     vMergeAutoTagger = fn_merge_tagged_formats(vAutoTagger, vRepeatedUtterancesHide)
 
-    if saveFlag:
-        vWriter1 = pd.ExcelWriter(vLogsPath[0:vLogsPath.rfind('/') + 1] + 'Tagger_Hide.xlsx')
-        vTaggerNoKnowlegdeBase.to_excel(vWriter1, 'logs', index=False)
-        vWriter1.save()
+    vWriter1 = pd.ExcelWriter(vLogsPath[0:vLogsPath.rfind('/') + 1] + 'Tagger_Hide.xlsx')
+    vTaggerNoKnowlegdeBase.to_excel(vWriter1, 'logs', index=False)
+    vWriter1.save()
 
-        vWriter2 = pd.ExcelWriter(vLogsPath[0:vLogsPath.rfind('/') + 1] + 'Merge_Auto_Tagger.xlsx')
-        vMergeAutoTagger.to_excel(vWriter2, 'logs', index=False)
-        vWriter2.save()
+    vWriter2 = pd.ExcelWriter(vLogsPath[0:vLogsPath.rfind('/') + 1] + 'Merge_Auto_Tagger.xlsx')
+    vMergeAutoTagger.to_excel(vWriter2, 'logs', index=False)
+    vWriter2.save()
 
     path = vLogsPath[0:vLogsPath.rfind('/') + 1] + 'Tagger.xlsx'
     workbook = xlsxwriter.Workbook(path)

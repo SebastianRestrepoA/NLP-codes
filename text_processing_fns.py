@@ -362,7 +362,7 @@ def fn_word_frequency_analysis_fail_utterances(vPathKnowledgeBase, vPathSuccesFa
         all_tables = []
         for i in range(0, len(intent_fail)):
 
-            all_tables.append(get_word_frequency(word_frequency, intent_fail['utterance'][i], intent_fail['real_intent'][i],
+            all_tables.append(fn_get_word_frequency(word_frequency, intent_fail['utterance'][i], intent_fail['real_intent'][i],
                                                  intent_fail['pred_intent'][i]))
 
         multiple_dfs_to_excel(all_tables, writer, intent[:17], 5)
@@ -441,14 +441,14 @@ def fn_calculate_total_utterances_tagged(vPathTaggedFile):
     return vResult
 
 
-def get_word_frequency(df_wordfreq, utterance, real_intent, pred_intent):
+def fn_get_word_frequency(df_wordfreq, utterance, real_intent, pred_intent):
 
     words = utterance.split(' ')
 
     return df_wordfreq.loc[words, [real_intent, pred_intent]]
 
 
-def get_jaccard_sim(vStr1, vStr2):
+def fn_get_jaccard_sim(vStr1, vStr2):
 
     """ This function computes the jaccard similarity coefficient between two utterances (or strings).
 
@@ -463,14 +463,14 @@ def get_jaccard_sim(vStr1, vStr2):
     return float(len(c)) / (len(a) + len(b) - len(c))
 
 
-def get_vectors(strs):
+def fn_get_vectors(strs):
     text = [t for t in strs]
     vectorizer = CountVectorizer(text)
     vectorizer.fit(text)
     return vectorizer.transform(text).toarray()
 
 
-def get_cosine_sim(vUtterancesKnowledgeBase):
+def fn_get_cosine_sim(vUtterancesKnowledgeBase):
 
     """ This function computes the cosine similarity between the utterances of the knowledge base.
 
@@ -480,7 +480,7 @@ def get_cosine_sim(vUtterancesKnowledgeBase):
 
     """
 
-    vectors = [t for t in get_vectors(vUtterancesKnowledgeBase)]
+    vectors = [t for t in fn_get_vectors(vUtterancesKnowledgeBase)]
     return cosine_similarity(vectors)
 
 
@@ -505,9 +505,9 @@ def fn_utterances_similarity_between_intents(vPathKnowledgeBase, vThreshold, out
     jaccard_matrix = np.zeros((len(df['Utterance']), len(df['Utterance'])))
 
     for idx, utterance in enumerate(list(df['Utterance'])):
-        jaccard_matrix[:, idx] = df['Utterance'].apply(lambda x: get_jaccard_sim(utterance, x))
+        jaccard_matrix[:, idx] = df['Utterance'].apply(lambda x: fn_get_jaccard_sim(utterance, x))
 
-    cosine_matrix = get_cosine_sim(list(df['Utterance']))
+    cosine_matrix = fn_get_cosine_sim(list(df['Utterance']))
 
     df_final = []
 
