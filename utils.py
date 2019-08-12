@@ -476,118 +476,52 @@ def fn_sofy_response(vEndPoints, autoring_key, utterance):
     utterance_path = [pd.DataFrame.from_dict(vMainRouterOutput, orient='index').
                           rename(index={'intent': 'main_router_output', 'score': 'score_main_router'}).T]
 
-    if vMainRouterOutput['intent'] == '#nomina':
+    if vMainRouterOutput['intent'] == '#administrar_novedades_de_nomina':
 
-        vNominaRouterOutput = fn_luis_response(vEndPoints['NominaRouter'], autoring_key, utterance)
-        utterance_path.append(pd.DataFrame.from_dict(vNominaRouterOutput, orient='index').
-                              rename(index={'intent': 'nomina_router_output', 'score': 'score_nomina_router'}).T)
-
-        if vNominaRouterOutput['intent'] == '#cesantias':
-
-            vFinalOutput = fn_luis_response(vEndPoints['Cesantias'], autoring_key, utterance)
-
-        elif vNominaRouterOutput['intent'] == '#vacaciones':
-
-            vFinalOutput = fn_luis_response(vEndPoints['Vacaciones'], autoring_key, utterance)
-
-        elif vNominaRouterOutput['intent'] == 'None':
-            vFinalOutput = '#Nomina_None'
-        else:
-            vFinalOutput = '#Nomina_None'
-
-    elif vMainRouterOutput['intent'] == '#procesos_producto':
-
-        vPypRouterOutput = fn_luis_response(vEndPoints['PypRouter'], autoring_key, utterance)
-        utterance_path.append(pd.DataFrame.from_dict(vPypRouterOutput, orient='index').
-                              rename(index={'intent': 'pyp_router_output', 'score': 'score_pyp_router'}).T)
-
-        if vPypRouterOutput['intent'] == '#depositos':
-
-            vDepositosRouterOutput = fn_luis_response(vEndPoints['DepositosRouter'], autoring_key, utterance)
-            utterance_path.append(pd.DataFrame.from_dict(vDepositosRouterOutput , orient='index').
-                                  rename(index={'intent': 'depositos_router_output', 'score': 'score_depositos_router'})
-                                  .T)
-
-            if vDepositosRouterOutput['intent'] == "#dep_apertura_cuenta_ahorros":
-                vFinalOutput = '#dep_apertura_cuenta_ahorros'
-            elif vDepositosRouterOutput['intent'] == '#dep_apertura_nomina':
-                vFinalOutput = '#dep_apertura_nomina'
-            elif vDepositosRouterOutput['intent'] == '#dep_cambio_estado_final':
-                vFinalOutput = '#dep_cambio_estado_final'
-            elif vDepositosRouterOutput['intent'] == '#dep_cambio_plan':
-                vFinalOutput = '#dep_cambio_plan'
-            elif vDepositosRouterOutput['intent'] == '#dep_cancelacion':
-                vFinalOutput = '#dep_cancelacion'
-            elif vDepositosRouterOutput['intent'] == 'None':
-                vFinalOutput = '#depositos_None'
-            else:
-                vFinalOutput = '#depositos_None'
-
-            # utterance_path.append(pd.DataFrame.from_dict(vFinalOutput, orient='index').
-            #                       rename(index={'intent': 'final_output', 'score': 'score_final_output'}).T)
-
-        elif vPypRouterOutput['intent'] == '#hipotecario':
-
-            vHipotecarioRouterOutput = fn_luis_response(vEndPoints['HipotecarioRouter'], autoring_key, utterance)
-            utterance_path.append(pd.DataFrame.from_dict(vHipotecarioRouterOutput, orient='index').
-                                  rename(index={'intent': 'hip_router_output', 'score': 'score_hip_router'}).T)
-
-            if vHipotecarioRouterOutput['intent'] == '#hip_programas_de_gobierno':
-
-                vFinalOutput = fn_luis_response(vEndPoints['ProgramasGobierno'], autoring_key, utterance)
-
-            elif vHipotecarioRouterOutput['intent'] == '#hip_compra_de_cartera':
-
-                vFinalOutput = fn_luis_response(vEndPoints['CompraCartera'], autoring_key, utterance)
-
-            elif vHipotecarioRouterOutput['intent'] == 'None':
-
-                vFinalOutput = '#Hip_Router_None'
-
-            else:
-                vFinalOutput = '#Hip_Router_None'
-
-        elif vPypRouterOutput['intent'] == 'None':
-
-            vFinalOutput = '#PypRouter_None'
-        else:
-
-            vFinalOutput = '#PypRouter_None'
+        vFinalOutput = fn_luis_response(vEndPoints['Cesantias'], autoring_key, utterance)
 
     elif vMainRouterOutput['intent'] == '#tecnologia':
 
         vFinalOutput = fn_luis_response(vEndPoints['Office'], autoring_key, utterance)
 
-    elif vMainRouterOutput['intent'] == 'calificarproceso':
+    elif vMainRouterOutput['intent'] == '#procesos_y_producto':
+
+        vHipotecarioRouterOutput = fn_luis_response(vEndPoints['HipotecarioRouter'], autoring_key, utterance)
+        utterance_path.append(pd.DataFrame.from_dict(vHipotecarioRouterOutput, orient='index').
+                              rename(index={'intent': 'hip_router_output', 'score': 'score_hip_router'}).T)
+
+        if vHipotecarioRouterOutput['intent'] == '#hip_programas_de_gobierno':
+            vFinalOutput = fn_luis_response(vEndPoints['ProgramasGobierno'], autoring_key, utterance)
+
+        elif vHipotecarioRouterOutput['intent'] == 'None':
+
+            vFinalOutput = vHipotecarioRouterOutput
+
+    elif vMainRouterOutput['intent'] == '#saludar':
 
         vFinalOutput = vMainRouterOutput
 
-    elif vMainRouterOutput['intent'] == 'cancelar':
+    elif vMainRouterOutput['intent'] == '#despedir':
 
         vFinalOutput = vMainRouterOutput
 
-    elif vMainRouterOutput['intent'] == 'preguntar':
+    elif vMainRouterOutput['intent'] == '#preguntar':
 
         vFinalOutput = vMainRouterOutput
 
-    elif vMainRouterOutput['intent'] == 'saludos':
+    elif vMainRouterOutput['intent'] == '#calificarproceso':
 
         vFinalOutput = vMainRouterOutput
 
     elif vMainRouterOutput['intent'] == 'None':
+
         vFinalOutput = vMainRouterOutput
 
-    else:
-        vFinalOutput = vMainRouterOutput
-
-
-    try:
-        utterance_path.append(pd.DataFrame.from_dict(vFinalOutput, orient='index').
+    utterance_path.append(pd.DataFrame.from_dict(vFinalOutput, orient='index').
                           rename(index={'intent': 'final_output', 'score': 'score_final_output'}).T)
-    except:
-        print('')
 
     return pd.concat(utterance_path, axis=1)
+
 
 def color_max_row(row):
     return ['background-color: red' if x > 3 else 'background-color: yellow' for x in row]

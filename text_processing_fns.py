@@ -574,32 +574,48 @@ def create_nn_model_architecture(input_size):
     return classifier
 
 
-def feature_engineering(x):
+def feature_engineering(vUtterances, vectorizer=False, tf_idf=False, ngram=False):
+
+    """ This function coverts utterances into feature matrices such as word2vect, TF-IDF and n-gram used for training
+    of ML models.
+
+    :param vUtterances: pandas series with the utterances of knowledge base.
+
+    :return: dictionary with 3 features matrices corresponding to the count vector, TF-IDF and n-grams transforms.
+
+    """
 
     features = {}
-    x.index = range(0, len(x))
+    vUtterances.index = range(0, len(vUtterances))
 
-    # transform the training data using count vectorizer object
-    # create a count vectorizer object
-    count_vect = CountVectorizer(analyzer='word')
-    count_vect.fit(x) # Create a vocabulary from all utterances
-    x_count = count_vect.transform(x)  # Count how many times is each word from each utterance in the vocabulary.
-    features['count_vectorizer'] = {'object': count_vect, 'matrix': x_count}
-    # pd.DataFrame(x_count.toarray(), columns=count_vect.get_feature_names())
+    if vectorizer is True:
 
-    # word level tf-idf
+        # transform the training data using count vectorizer object
+        # create a count vectorizer object
+        count_vect = CountVectorizer(analyzer='word')
+        count_vect.fit(vUtterances) # Create a vocabulary from all utterances
+        x_count = count_vect.transform(vUtterances)  # Count how many times is each word from each utterance in the
+        # vocabulary.
+        features['count_vectorizer'] = {'object': count_vect, 'matrix': x_count}
+        # pd.DataFrame(x_count.toarray(), columns=count_vect.get_feature_names())
 
-    " TF-IDF score represents the relative importance of a term in the document and the entire corpus. "
-    tfidf_vect = TfidfVectorizer(analyzer='word', max_features=5000)  # token_pattern=r'\w{1,}'
-    tfidf_vect.fit(x)
-    x_tfidf = tfidf_vect.transform(x)
-    features['TF-IDF'] = {'object': tfidf_vect, 'matrix': x_tfidf}
+    if tf_idf is True:
 
-    # ngram level tf-idf
-    tfidf_vect_ngram = TfidfVectorizer(analyzer='word', ngram_range=(2, 3), max_features=5000) # token_pattern=r'\w{1,}'
-    tfidf_vect_ngram.fit(x)
-    x_tfidf_ngram = tfidf_vect_ngram.transform(x)
-    features['ngram'] = {'object': tfidf_vect_ngram, 'matrix': x_tfidf_ngram}
+        # word level tf-idf
+
+        " TF-IDF score represents the relative importance of a term in the document and the entire corpus. "
+        tfidf_vect = TfidfVectorizer(analyzer='word', max_features=5000)  # token_pattern=r'\w{1,}'
+        tfidf_vect.fit(vUtterances)
+        x_tfidf = tfidf_vect.transform(vUtterances)
+        features['TF-IDF'] = {'object': tfidf_vect, 'matrix': x_tfidf}
+
+    if ngram is True:
+
+        # ngram level tf-idf
+        tfidf_vect_ngram = TfidfVectorizer(analyzer='word', ngram_range=(2, 3), max_features=5000) # token_pattern=r'\w{1,}'
+        tfidf_vect_ngram.fit(vUtterances)
+        x_tfidf_ngram = tfidf_vect_ngram.transform(vUtterances)
+        features['ngram'] = {'object': tfidf_vect_ngram, 'matrix': x_tfidf_ngram}
 
     return features
 
