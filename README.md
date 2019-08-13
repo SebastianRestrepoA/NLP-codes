@@ -1,3 +1,3 @@
 # NLP-codes
 
-This repository contains some text processing functions useful for the development and improving of a chatbot. 
+This repository contains some text processing functions useful for the development and improvement of a chatbot.
