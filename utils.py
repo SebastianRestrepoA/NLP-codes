@@ -277,25 +277,26 @@ def fn_generate_drop_down_lists(df_tagger, vPaths, vNoAddPaths, vLogsPath):
         utterances_knowledge_base.append(pd.read_excel(vPaths[key]))
         utterances_knowledge_base.append(pd.read_excel(vNoAddPaths[key]))
 
-    utterances_knowledge_base = pd.concat(utterances_knowledge_base).reset_index(drop=True)
-    # Verificar cuales de tagger estan en la base de conocimiento
-    comparison = df_tagger['Utterance'].isin(utterances_knowledge_base['Utterance'])
-    vRepeatedUtterancesHide = df_tagger[comparison==True]
-    vTaggerNoKnowlegdeBase = df_tagger[comparison==False]
-    # Verificar cuales de la bc estan en tagger
-    idx = utterances_knowledge_base['Utterance'].isin(df_tagger['Utterance'])
-    vAutoTagger = pd.concat([pd.Series(), utterances_knowledge_base[idx], pd.Series()], axis=1)
-    vAutoTagger.columns = ['ASK', 'Dominio', 'Intent', 'Utterance', '@entity_name, value, synonym']
-
-    vMergeAutoTagger = fn_merge_tagged_formats(vAutoTagger, vRepeatedUtterancesHide)
+    # utterances_knowledge_base = pd.concat(utterances_knowledge_base).reset_index(drop=True)
+    # # Verificar cuales de tagger estan en la base de conocimiento
+    # comparison = df_tagger['Utterance'].isin(utterances_knowledge_base['Utterance'])
+    # vRepeatedUtterancesHide = df_tagger[comparison==True]
+    # vTaggerNoKnowlegdeBase = df_tagger[comparison==False]
+    # # Verificar cuales de la bc estan en tagger
+    # idx = utterances_knowledge_base['Utterance'].isin(df_tagger['Utterance'])
+    # vAutoTagger = pd.concat([pd.Series(), utterances_knowledge_base[idx], pd.Series()], axis=1)
+    # vAutoTagger.columns = ['ASK', 'Dominio', 'Intent', 'Utterance', '@entity_name, value, synonym']
+    #
+    # vMergeAutoTagger = fn_merge_tagged_formats(vAutoTagger, vRepeatedUtterancesHide)
 
     vWriter1 = pd.ExcelWriter(vLogsPath[0:vLogsPath.rfind('/') + 1] + 'Tagger_Hide.xlsx')
-    vTaggerNoKnowlegdeBase.to_excel(vWriter1, 'logs', index=False)
+    # vTaggerNoKnowlegdeBase.to_excel(vWriter1, 'logs', index=False)
+    df_tagger.to_excel(vWriter1, 'logs', index=False)
     vWriter1.save()
-
-    vWriter2 = pd.ExcelWriter(vLogsPath[0:vLogsPath.rfind('/') + 1] + 'Merge_Auto_Tagger.xlsx')
-    vMergeAutoTagger.to_excel(vWriter2, 'logs', index=False)
-    vWriter2.save()
+    #
+    # vWriter2 = pd.ExcelWriter(vLogsPath[0:vLogsPath.rfind('/') + 1] + 'Merge_Auto_Tagger.xlsx')
+    # vMergeAutoTagger.to_excel(vWriter2, 'logs', index=False)
+    # vWriter2.save()
 
     path = vLogsPath[0:vLogsPath.rfind('/') + 1] + 'Tagger.xlsx'
     workbook = xlsxwriter.Workbook(path)
@@ -326,7 +327,8 @@ def fn_generate_drop_down_lists(df_tagger, vPaths, vNoAddPaths, vLogsPath):
     worksheet.write('D1', 'Utterance', header_format)
     worksheet.write('E1', '@entity_name, value, synonym', header_format)
 
-    utterances = list(vTaggerNoKnowlegdeBase['Utterance'].values)
+    # utterances = list(vTaggerNoKnowlegdeBase['Utterance'].values)
+    utterances = list(df_tagger['Utterance'].values)
     worksheet.write_column('D2', utterances)
 
     domain_names = list(intents_names.keys()) + ['naturalidad', 'descarte', 's_n']
@@ -520,6 +522,7 @@ def fn_sofy_response(vEndPoints, autoring_key, utterance):
     utterance_path.append(pd.DataFrame.from_dict(vFinalOutput, orient='index').
                           rename(index={'intent': 'final_output', 'score': 'score_final_output'}).T)
 
+    print(utterance + ' ----->  ' + vFinalOutput['intent'])
     return pd.concat(utterance_path, axis=1)
 
 

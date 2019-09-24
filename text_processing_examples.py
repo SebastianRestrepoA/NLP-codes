@@ -25,7 +25,7 @@ vPathSuccesFailFile = 'C:/Users/Administrator/Documents/CHATBOT SOFY/Hipotecario
 
 example_7 = fn_calculate_total_utterances_per_intent(vPathKnowledgeBase, plot=True)
 
-fn_utterances_similarity_between_intents(vPathKnowledgeBase, 0.4, 'similarity_analysis_programas')
+fn_utterances_similarity_between_intents(vPathKnowledgeBase, 0.8, 'similarity_analysis_programas')
 
 example_8 = fn_calculate_word_frequency_per_intents(vPathKnowledgeBase, generate_excel=True)
 

@@ -12,6 +12,7 @@ from keras import layers, models, optimizers
 from sklearn.metrics.pairwise import cosine_similarity
 from matplotlib import rcParams
 from utils import *
+import unicodedata
 rcParams.update({'figure.autolayout': True})
 
 
@@ -40,6 +41,20 @@ def remove_stopwords(vKnowledgeBase):
     """
     stop = stopwords.words('spanish')
     return vKnowledgeBase.apply(lambda x: " ".join(x for x in x.split() if x not in stop))
+
+
+def remove_tilde(vUtterance):
+
+    """ This function removes the accent mark (or "tilde") from a utterance.
+
+    :param vUtterance: string variable with a utterance.
+
+    :return: string variable with the utterance without "tildes".
+
+
+    """
+
+    return ''.join((c for c in unicodedata.normalize('NFD', vUtterance) if unicodedata.category(c) != 'Mn'))
 
 
 def remove_characters(vKnowledgeBase):
@@ -193,7 +208,7 @@ def extract_trigrams(utterance):
 
     :param utterance: string variable.
 
-    :return: list variable with the bigrams obtained from the input utterance.
+    :return: list variable with the trigrams obtained from the input utterance.
     """
 
     utterance = utterance.split()
@@ -260,8 +275,8 @@ def fn_calculate_word_frequency_per_intents(path, delete_stop_word=False, stemmi
            lemmatization: this option applies lemmatization function over the knowledge base. Default False
            delete_characters: this option deletes irrelevant puntuation characters over the knowledge base.
            Default False
-           generate_excel: this option generates a excel file with the words, bigrams and trigrams frequency of the
-           knowledge base. Default False
+           generate_excel: this option generates a excel file in the knowledge base path with the words, bigrams and
+           trigrams frequency of the knowledge base. Default False
 
     :return: pandas dataframe with the words frequency of the knowledge base.
 
@@ -269,8 +284,8 @@ def fn_calculate_word_frequency_per_intents(path, delete_stop_word=False, stemmi
     """
 
     df = pd.read_excel(path)
-    intent = df["Intent"]
-    unique_intent = list(set(intent))
+    df["Intent"] = [remove_tilde(intent_name) for intent_name in df["Intent"]]
+    unique_intent = list(set(df["Intent"]))
 
     # df["Utterance"] = df["Utterance"].apply(lambda row: row.strip().lower())
 
@@ -323,7 +338,7 @@ def fn_calculate_word_frequency_per_intents(path, delete_stop_word=False, stemmi
 
     if generate_excel:
         excel_name = input('Indique el nombre del dominio de conocimiento del excel a generar: ')
-        writer = pd.ExcelWriter('Word frequency of ' + excel_name + '.xlsx', engine='xlsxwriter')
+        writer = pd.ExcelWriter(path[0:path.rfind('/') + 1] + 'Word frequency of ' + excel_name + '.xlsx', engine='xlsxwriter')
         df_final.to_excel(writer, sheet_name='word frequency')
         df_lexical.to_excel(writer, sheet_name='lexical diversity')
         bigrams_final.to_excel(writer, sheet_name='bigrams frequency')
@@ -353,7 +368,8 @@ def fn_word_frequency_analysis_fail_utterances(vPathKnowledgeBase, vPathSuccesFa
                                                                                               ascending=False)
 
     intents = list(set(df_fail_groups['real_intent']))
-    writer = pd.ExcelWriter('word_frequency_fail_utterances.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter(vPathKnowledgeBase[0:vPathKnowledgeBase.rfind('/') + 1] +
+                            'word_frequency_fail_utterances.xlsx', engine='xlsxwriter')
 
     for intent in intents:
 
@@ -413,7 +429,7 @@ def fn_calculate_total_utterances_per_intent(vPathKnowledgeBase, plot=False):
     return result
 
 
-def fn_calculate_total_utterances_tagged(vPathTaggedFile):
+def fn_calculate_total_utterances_tagged(vPathTaggedFile, excel=False):
 
     """ This function computes the total of tagged utterances per intents of each domain.
 
@@ -435,8 +451,17 @@ def fn_calculate_total_utterances_tagged(vPathTaggedFile):
         vIntentData = [len(vDomainData[vDomainData['Intent'] == intent]) for intent in vDomainData['Intent'].unique()]
 
         vResult[domain_name] = pd.DataFrame(vIntentData, index=vDomainData['Intent'].unique(),
-                                            columns=['Total utterances tagged']).sort_values(by='Total utterances tagged'
-                                                                                             , ascending=False)
+                                            columns=['Total utterances tagged']).\
+            sort_values(by='Total utterances tagged', ascending=False)
+
+    if excel is True:
+
+        writer = pd.ExcelWriter(vPathTaggedFile[0:vPathTaggedFile.rfind('/') + 1] + 'total_utterances_tagged.xlsx',
+                                engine='xlsxwriter')
+        for domain, total_utterances_tagged in vResult.items():
+            total_utterances_tagged.to_excel(writer, sheet_name=domain)
+
+        writer.save()
 
     return vResult
 
@@ -491,11 +516,12 @@ def fn_utterances_similarity_between_intents(vPathKnowledgeBase, vThreshold, out
 
 
     :param vPathKnowledgeBase: string variable with local path where is saved the knowledge base (.xlsx file)
-           vThreshold: float variable used to filter the utterances with similarity above of this number.
+           vThreshold: float variable used to filter the utterances with similarity below of this number.
 
     """
 
-    writer = pd.ExcelWriter(output_file_name + '.xlsx')
+    writer = pd.ExcelWriter(vPathKnowledgeBase[0:vPathKnowledgeBase.rfind('/') + 1] +
+                            output_file_name + '.xlsx', engine='xlsxwriter')
 
     df = pd.read_excel(vPathKnowledgeBase)
 
@@ -537,46 +563,9 @@ def fn_utterances_similarity_between_intents(vPathKnowledgeBase, vThreshold, out
     print('Similarity between intents have finished')
 
 
-def fn_utterances_similarity_two_docs(path_doc1, path_doc2, output_file_name):
-
-    writer = pd.ExcelWriter(output_file_name + '.xlsx')
-    utterances_knowledge_base = pd.read_excel(path_doc1)
-    utterances_knowledge_base['Utterance'] = lowercase_transform(utterances_knowledge_base['Utterance'])
-    utterances_knowledge_base = utterances_knowledge_base.reset_index(drop=True)
-    utterances_knowledge_base = utterances_knowledge_base[utterances_knowledge_base.columns[:-2]]
-
-    utterances_doc_to_depure = pd.read_excel(path_doc2)
-    utterances_doc_to_depure['Utterance'] = lowercase_transform(utterances_doc_to_depure['Utterance'])
-    utterances_doc_to_depure = utterances_doc_to_depure.reset_index(drop=True)
-    # utterances_doc_to_depure = utterances_doc_to_depure[utterances_doc_to_depure.columns[:-2]]
-
-    id = utterances_doc_to_depure['Utterance'].isin(utterances_knowledge_base['Utterance'])
-    new_doc = utterances_doc_to_depure[id == False]
-    # new_doc = utterances_doc_to_depure[id == True]
-
-    writer = pd.ExcelWriter('utterances_No_agregadas.xlsx', engine='xlsxwriter')
-    new_doc.to_excel(writer, index=False)
-    writer.save()
-
-
-def create_nn_model_architecture(input_size):
-    # create input layer
-    input_layer = layers.Input((input_size,), sparse=True)
-
-    # create hidden layer
-    hidden_layer = layers.Dense(100, activation="relu")(input_layer)
-
-    # create output layer
-    output_layer = layers.Dense(11, activation="sigmoid")(hidden_layer)
-
-    classifier = models.Model(inputs=input_layer, outputs=output_layer)
-    classifier.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
-    return classifier
-
-
 def feature_engineering(vUtterances, vectorizer=False, tf_idf=False, ngram=False):
 
-    """ This function coverts utterances into feature matrices such as word2vect, TF-IDF and n-gram used for training
+    """ This function coverts utterances into feature matrices such as word2vect, TF-IDF and n-gram for training
     of ML models.
 
     :param vUtterances: pandas series with the utterances of knowledge base.
@@ -618,4 +607,43 @@ def feature_engineering(vUtterances, vectorizer=False, tf_idf=False, ngram=False
         features['ngram'] = {'object': tfidf_vect_ngram, 'matrix': x_tfidf_ngram}
 
     return features
+
+
+def fn_utterances_similarity_two_docs(path_doc1, path_doc2, output_file_name):
+
+    writer = pd.ExcelWriter(output_file_name + '.xlsx')
+    utterances_knowledge_base = pd.read_excel(path_doc1)
+    utterances_knowledge_base['Utterance'] = lowercase_transform(utterances_knowledge_base['Utterance'])
+    utterances_knowledge_base = utterances_knowledge_base.reset_index(drop=True)
+    utterances_knowledge_base = utterances_knowledge_base[utterances_knowledge_base.columns[:-2]]
+
+    utterances_doc_to_depure = pd.read_excel(path_doc2)
+    utterances_doc_to_depure['Utterance'] = lowercase_transform(utterances_doc_to_depure['Utterance'])
+    utterances_doc_to_depure = utterances_doc_to_depure.reset_index(drop=True)
+    # utterances_doc_to_depure = utterances_doc_to_depure[utterances_doc_to_depure.columns[:-2]]
+
+    id = utterances_doc_to_depure['Utterance'].isin(utterances_knowledge_base['Utterance'])
+    new_doc = utterances_doc_to_depure[id == False]
+    # new_doc = utterances_doc_to_depure[id == True]
+
+    writer = pd.ExcelWriter('utterances_No_agregadas.xlsx', engine='xlsxwriter')
+    new_doc.to_excel(writer, index=False)
+    writer.save()
+
+
+def create_nn_model_architecture(input_size):
+    # create input layer
+    input_layer = layers.Input((input_size,), sparse=True)
+
+    # create hidden layer
+    hidden_layer = layers.Dense(100, activation="relu")(input_layer)
+
+    # create output layer
+    output_layer = layers.Dense(11, activation="sigmoid")(hidden_layer)
+
+    classifier = models.Model(inputs=input_layer, outputs=output_layer)
+    classifier.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
+    return classifier
+
+
 

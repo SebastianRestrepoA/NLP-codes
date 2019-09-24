@@ -10,9 +10,8 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import f1_score
 
 " LOAD DATA BASE"
-vPathKnowledgeBase = 'C:/Users/Administrator/Documents/CHATBOT SOFY/Hipotecario/programas de gobierno/Refinamiento 1/' \
-                    'Curacion/Programas de Gobierno.xlsx'
-
+vPathKnowledgeBase = './KnowledgeBase.xlsx'
+#
 KnowledgeBase = pd.read_excel(vPathKnowledgeBase)
 
 # label encode the target variable to transform non-numerical labels
@@ -51,6 +50,7 @@ kf = StratifiedKFold(n_splits=10)
 y_real_total = []
 y_pred_total = []
 fold = 1
+fail_utterances = []
 
 for train, val in kf.split(x, y):
 
@@ -59,21 +59,39 @@ for train, val in kf.split(x, y):
 
     classifier = SVC(kernel=best_kernel, gamma=best_gamma, C=best_c).fit(X_train, y_train)
 
-    # Entrenamiento del modelo
+    # Model training
     classifier.fit(X_train, y_train)
 
-    # Prediccion de las etiquetas del conjunto de validacion
+    # Model prediction
     y_pred = classifier.predict(X_val)
     y_pred_total.append(y_pred)
     y_real_total.append(y_val)
 
-    # errors_idx = y_pred != y_val
-    # fail_utt = fail_utt.append(pd.concat([X_val[errors_idx], y_val[errors_idx], y_pred[errors_idx]], axis=1,
-    #                                      keys=['utterance', 'real', 'predicted']))
+    # to save the utterances that were not recognize correctly
 
-# Se concatenan todas las clasificaciones obtenidas en la validacion cruzada.
+    errors_idx = y_pred != y_val
+    fail_utterances.append(pd.concat((utterances_val[errors_idx].reset_index(drop=True),
+                                      intent_names_val[errors_idx].reset_index(drop=True),
+                                      pd.DataFrame(encoder.inverse_transform(y_pred[errors_idx]),
+                                                   columns=['Predicted intent'])),
+                                     axis=1))
+
+# The predictions obtained from cross validation procedure are concatenated and the performance measures are estimated.
+
 y_real_total = np.concatenate(y_real_total)
 y_pred_total = np.concatenate(y_pred_total)
-# Se calculan las metricas de desempeño del algoritmo de machine learning
-print(classification_report(y_pred_total, y_real_total, target_names=intent_names))
-print()
+metrics = classification_report(y_pred_total, y_real_total, target_names=intent_names, output_dict=True)
+metrics.pop('micro avg', None)
+metrics.pop('weighted avg', None)
+fail_utterances = pd.concat(fail_utterances, ignore_index=True)
+
+# save results in excel file
+writer_metrics = pd.ExcelWriter('metrics_svm_model.xlsx', engine='xlsxwriter')
+writer_fails = pd.ExcelWriter('fail_utterances_svm_model.xlsx', engine='xlsxwriter')
+
+metrics = pd.DataFrame.from_dict(metrics, orient='index')
+metrics.to_excel(writer_metrics)
+fail_utterances.to_excel(writer_fails)
+writer_fails.save()
+writer_metrics.save()
+
