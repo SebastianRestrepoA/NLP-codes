@@ -458,72 +458,227 @@ def fn_luis_response(url, key, utterance):
         'staging': 'false',
     }
 
+    entity_recognition = []
+    intent_prediction = []
+
     try:
         r = requests.get(url, headers=headers, params=params)
         output = r.json()
         intent_prediction = output['topScoringIntent']
-        # entity_recognition = output['entities'][0]['type']
+
+        for i in range(0, len(output['entities'])):
+            entity_recognition.append(output['entities'][i]['resolution']['values'][0])
 
         # print(prediction)
 
     except Exception as e:
         print("[Errno {0}] {1}".format(e.errno, e.strerror))
 
-    return intent_prediction
+    luis_output = {'intent_recognition': intent_prediction, 'entities_recognition': entity_recognition}
+
+    return luis_output
 
 
 def fn_sofy_response(vEndPoints, autoring_key, utterance):
 
-    vMainRouterOutput = fn_luis_response(vEndPoints['MainRouter'], autoring_key, utterance)
-    utterance_path = [pd.DataFrame.from_dict(vMainRouterOutput, orient='index').
+    vMainRouterOutput = fn_luis_response(vEndPoints['MainRouter'], autoring_key['MainRouter'], utterance)
+    utterance_path = [pd.DataFrame.from_dict(vMainRouterOutput['intent_recognition'], orient='index').
                           rename(index={'intent': 'main_router_output', 'score': 'score_main_router'}).T]
 
-    if vMainRouterOutput['intent'] == '#administrar_novedades_de_nomina':
+    if vMainRouterOutput['intent_recognition']['intent'] == 'gestion_humana':
 
-        vFinalOutput = fn_luis_response(vEndPoints['Cesantias'], autoring_key, utterance)
+        vFinalOutput = fn_luis_response(vEndPoints['Cesantias'], autoring_key['Cesantias'], utterance)
 
-    elif vMainRouterOutput['intent'] == '#tecnologia':
+    elif vMainRouterOutput['intent_recognition']['intent'] == '#tecnologia':
 
-        vFinalOutput = fn_luis_response(vEndPoints['Office'], autoring_key, utterance)
+        vFinalOutput = fn_luis_response(vEndPoints['Office'], autoring_key['Office'], utterance)
 
-    elif vMainRouterOutput['intent'] == '#procesos_y_producto':
+    elif vMainRouterOutput['intent_recognition']['intent'] == '#procesos_y_producto':
 
-        vHipotecarioRouterOutput = fn_luis_response(vEndPoints['HipotecarioRouter'], autoring_key, utterance)
-        utterance_path.append(pd.DataFrame.from_dict(vHipotecarioRouterOutput, orient='index').
+        vHipotecarioRouterOutput = fn_luis_response(vEndPoints['HipotecarioRouter'], autoring_key['HipotecarioRouter'], utterance)
+        utterance_path.append(pd.DataFrame.from_dict(vHipotecarioRouterOutput['intent_recognition'], orient='index').
                               rename(index={'intent': 'hip_router_output', 'score': 'score_hip_router'}).T)
 
-        if vHipotecarioRouterOutput['intent'] == '#hip_programas_de_gobierno':
-            vFinalOutput = fn_luis_response(vEndPoints['ProgramasGobierno'], autoring_key, utterance)
+        if vHipotecarioRouterOutput['intent_recognition']['intent'] == '#hip_programas_de_gobierno':
+            vFinalOutput = fn_luis_response(vEndPoints['ProgramasGobierno'], autoring_key['ProgramasGobierno'], utterance)
 
-        elif vHipotecarioRouterOutput['intent'] == 'None':
+        elif vHipotecarioRouterOutput['intent_recognition']['intent'] == 'None':
 
             vFinalOutput = vHipotecarioRouterOutput
 
-    elif vMainRouterOutput['intent'] == '#saludar':
+    elif vMainRouterOutput['intent_recognition']['intent'] == '#saludar':
 
         vFinalOutput = vMainRouterOutput
 
-    elif vMainRouterOutput['intent'] == '#despedir':
+    elif vMainRouterOutput['intent_recognition']['intent'] == '#despedir':
 
         vFinalOutput = vMainRouterOutput
 
-    elif vMainRouterOutput['intent'] == '#preguntar':
+    elif vMainRouterOutput['intent_recognition']['intent'] == '#preguntar':
 
         vFinalOutput = vMainRouterOutput
 
-    elif vMainRouterOutput['intent'] == '#calificarproceso':
+    elif vMainRouterOutput['intent_recognition']['intent'] == '#calificarproceso':
 
         vFinalOutput = vMainRouterOutput
 
-    elif vMainRouterOutput['intent'] == 'None':
+    elif vMainRouterOutput['intent_recognition']['intent'] == 'None':
 
         vFinalOutput = vMainRouterOutput
 
-    utterance_path.append(pd.DataFrame.from_dict(vFinalOutput, orient='index').
+    utterance_path.append(pd.DataFrame.from_dict(vFinalOutput['intent_recognition'], orient='index').
                           rename(index={'intent': 'final_output', 'score': 'score_final_output'}).T)
 
-    print(utterance + ' ----->  ' + vFinalOutput['intent'])
+    print(utterance + ' ----->  ' + vFinalOutput['intent_recognition']['intent'])
     return pd.concat(utterance_path, axis=1)
+
+
+def fn_entities_sofy_response(vEndPoints, autoring_key, utterance):
+
+    try:
+
+        main_router_decision = pd.DataFrame([utterance, None, None, None],
+                                            index=['utterance', 'main_entity',
+                                                   'main_intent', 'main_score'])
+
+        sub_router_decision = pd.DataFrame([None, None, None],
+                                           index=['hip_router_entity', 'hip_router_intent', 'hip_router_score'])
+
+        # final_decision = pd.DataFrame([None, None], index=['final_intent', 'final_score'])
+
+        vMainRouterOutput = fn_luis_response(vEndPoints['MainRouter'], autoring_key['MainRouter'], utterance)
+
+        entities_recognition = list(set(vMainRouterOutput['entities_recognition']))
+        if 'no' in entities_recognition: entities_recognition.remove('no')
+        if 'si' in entities_recognition: entities_recognition.remove('si')
+
+        if len(entities_recognition) == 1:
+
+            main_router_decision = pd.DataFrame([utterance, entities_recognition[0], None, None],
+                                                index=['utterance', 'main_entity',
+                                                       'main_intent', 'main_score'])
+
+        elif len(entities_recognition) != 1:
+
+            main_router_decision = pd.DataFrame([utterance, None, vMainRouterOutput['intent_recognition']['intent'],
+                                                 vMainRouterOutput['intent_recognition']['score']],
+                                                index=['utterance', 'main_entity', 'main_intent', 'main_score'])
+
+        if ('gestion_humana' in entities_recognition and len(entities_recognition) == 1) or\
+                (vMainRouterOutput['intent_recognition']['intent'] == '#administrar_novedades_de_nomina' and
+                 len(entities_recognition) != 1):
+
+            vGHRouterOutput = fn_luis_response(vEndPoints['GhRouter'], autoring_key['GhRouter'], utterance)
+
+            GH_entities_recognition = list(set(vGHRouterOutput['entities_recognition']))
+
+            if len(GH_entities_recognition) == 1:
+
+                sub_router_decision = pd.DataFrame([GH_entities_recognition[0], None, None],
+                                                   index=['GH_router_entity', 'GH_router_intent', 'GH_router_score'])
+
+            elif len(GH_entities_recognition) != 1:
+
+                sub_router_decision = pd.DataFrame([None, vGHRouterOutput['intent_recognition']['intent'],
+                                                    vGHRouterOutput['intent_recognition']['score']],
+                                                   index=['GH_router_entity', 'GH_router_intent', 'GH_router_score'])
+
+            if ('cesantias' in GH_entities_recognition and len(GH_entities_recognition) == 1) or \
+                    (vGHRouterOutput['intent_recognition']['intent'] == '#nom_cesantias' and
+                     len(GH_entities_recognition) != 1):
+
+                vFinalOutput = fn_luis_response(vEndPoints['Cesantias'], autoring_key['Cesantias'], utterance)
+
+            if ('vacaciones' in GH_entities_recognition and len(GH_entities_recognition) == 1) or \
+                    (vGHRouterOutput['intent_recognition']['intent'] == '#nom_vacaciones' and
+                     len(GH_entities_recognition) != 1):
+
+                vFinalOutput = fn_luis_response(vEndPoints['Vacaciones'], autoring_key['Vacaciones'], utterance)
+
+            elif (vGHRouterOutput['intent_recognition']['intent'] == 'None' and
+                  len(GH_entities_recognition) != 1):
+
+                vFinalOutput = vGHRouterOutput
+
+        elif ('producto' in entities_recognition and len(entities_recognition) == 1) or\
+                (vMainRouterOutput['intent_recognition']['intent'] == '#producto' and
+                 len(entities_recognition) != 1):
+
+            vHipotecarioRouterOutput = fn_luis_response(vEndPoints['HipotecarioRouter'],
+                                                        autoring_key['HipotecarioRouter'],
+                                                        utterance)
+
+            hip_entities_recognition = list(set(vHipotecarioRouterOutput['entities_recognition']))
+
+            if len(hip_entities_recognition) == 1:
+
+                sub_router_decision = pd.DataFrame([hip_entities_recognition[0], None, None],
+                                                   index=['hip_router_entity', 'hip_router_intent', 'hip_router_score'])
+
+            elif len(hip_entities_recognition) != 1:
+
+                sub_router_decision = pd.DataFrame([None, vHipotecarioRouterOutput['intent_recognition']['intent'],
+                                                    vHipotecarioRouterOutput['intent_recognition']['score']],
+                                                   index=['hip_router_entity', 'hip_router_intent', 'hip_router_score'])
+
+            # utterance_path.append(pd.DataFrame.from_dict(vHipotecarioRouterOutput, orient='index').
+            #                       rename(index={'intent': 'hip_router_output', 'score': 'score_hip_router'}).T)
+
+            if ('programas_de_gobierno' in hip_entities_recognition and len(hip_entities_recognition) == 1) or \
+                    (vHipotecarioRouterOutput['intent_recognition']['intent'] == '#hip_programas_de_gobierno' and
+                     len(hip_entities_recognition) != 1):
+
+                vFinalOutput = fn_luis_response(vEndPoints['ProgramasGobierno'], autoring_key['ProgramasGobierno'],
+                                                utterance)
+
+            elif ('compra_de_cartera' in hip_entities_recognition and len(hip_entities_recognition) == 1) or \
+                    (vHipotecarioRouterOutput['intent_recognition']['intent'] == '#hip_compra_de_cartera' and
+                     len(hip_entities_recognition) != 1):
+
+                vFinalOutput = fn_luis_response(vEndPoints['CompraCartera'], autoring_key['CompraCartera'],
+                                                utterance)
+
+            elif (vHipotecarioRouterOutput['intent_recognition']['intent'] == 'None' and
+                  len(hip_entities_recognition) != 1):
+
+                vFinalOutput = vHipotecarioRouterOutput
+
+        elif vMainRouterOutput['intent_recognition']['intent'] == '#tecnologia':
+
+            vFinalOutput = fn_luis_response(vEndPoints['Office'], autoring_key['Office'], utterance)
+
+        elif vMainRouterOutput['intent_recognition']['intent'] == '#saludar':
+
+            vFinalOutput = vMainRouterOutput
+
+        elif vMainRouterOutput['intent_recognition']['intent'] == '#despedir':
+
+            vFinalOutput = vMainRouterOutput
+
+        elif vMainRouterOutput['intent_recognition']['intent'] == '#preguntar':
+
+            vFinalOutput = vMainRouterOutput
+
+        elif vMainRouterOutput['intent_recognition']['intent'] == '#calificarproceso':
+
+            vFinalOutput = vMainRouterOutput
+
+        elif vMainRouterOutput['intent_recognition']['intent'] == 'None':
+
+            vFinalOutput = vMainRouterOutput
+
+        final_decision = pd.DataFrame([vFinalOutput['intent_recognition']['intent'],
+                                        vFinalOutput['intent_recognition']['score']],
+                                      index=['final_intent', 'final_score'])
+
+        print(utterance + ' ----->  ' + vFinalOutput['intent_recognition']['intent'])
+
+        path = pd.concat((main_router_decision.T, sub_router_decision.T, final_decision.T), axis=1)
+
+    except:
+        print("La utterance: " + utterance + 'ha presentado problemas')
+
+    return path
 
 
 def color_max_row(row):

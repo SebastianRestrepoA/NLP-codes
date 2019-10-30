@@ -2,13 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="eedb176d-6fc3-4b8f-bef6-bf1aefab0dc6" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/bot_funcional_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cognitive_architecture_validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/cognitive_architecture_validation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cognitive_architecture_validation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fail_utterances_cognitive_paths.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/fail_utterances_cognitive_paths.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/intent_classification.py" beforeDir="false" afterPath="$PROJECT_DIR$/intent_classification.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ongoing_training_process.py" beforeDir="false" afterPath="$PROJECT_DIR$/ongoing_training_process.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/metrics_cognitive_architecture.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/metrics_cognitive_architecture.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/text_processing_examples.py" beforeDir="false" afterPath="$PROJECT_DIR$/text_processing_examples.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/text_processing_fns.py" beforeDir="false" afterPath="$PROJECT_DIR$/text_processing_fns.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,11 +21,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/text_processing_fns.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="362">
-              <caret line="465" selection-start-line="465" selection-end-line="465" />
+            <state relative-caret-position="942">
+              <caret line="265" column="4" selection-start-line="265" selection-start-column="4" selection-end-line="265" selection-end-column="4" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -30,24 +33,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6018">
-              <caret line="369" column="72" selection-start-line="369" selection-start-column="72" selection-end-line="369" selection-end-column="72" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-                <element signature="e#9625#9714#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/text_processing_examples.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="16" column="42" selection-start-line="16" selection-start-column="42" selection-end-line="16" selection-end-column="42" />
+            <state relative-caret-position="325">
+              <caret line="32" column="44" selection-start-line="32" selection-start-column="44" selection-end-line="32" selection-end-column="44" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
               </folding>
@@ -56,10 +46,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/intent_classification.py">
+        <entry file="file://$PROJECT_DIR$/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1037">
-              <caret line="64" column="22" selection-start-line="64" selection-start-column="22" selection-end-line="64" selection-end-column="22" />
+            <state relative-caret-position="1044">
+              <caret line="531" column="70" selection-start-line="531" selection-start-column="70" selection-end-line="531" selection-end-column="70" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -68,14 +58,24 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cognitive_architecture_validation.py">
+        <entry file="file://$PROJECT_DIR$/intent_classification.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="30" column="46" selection-start-line="30" selection-start-column="46" selection-end-line="30" selection-end-column="46" />
+            <state relative-caret-position="-537">
+              <caret line="43" column="44" selection-start-line="43" selection-start-column="44" selection-end-line="43" selection-end-column="44" />
               <folding>
-                <element signature="e#1#20#0" expanded="true" />
-                <element signature="e#237#364#0" />
-                <element signature="e#1929#1930#0" />
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/classifiers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -84,8 +84,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ongoing_training_process.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1054">
-              <caret line="62" selection-start-line="62" selection-end-line="62" />
+            <state relative-caret-position="1020">
+              <caret line="60" column="70" selection-start-line="60" selection-start-column="70" selection-end-line="60" selection-end-column="70" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -96,20 +96,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="53" selection-start-line="1" selection-start-column="53" selection-end-line="1" selection-end-column="53" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/classifiers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="39" column="23" selection-start-line="39" selection-start-column="23" selection-end-line="39" selection-end-column="23" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="68">
+              <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
             </state>
           </provider>
         </entry>
@@ -133,14 +121,16 @@
         <option value="$PROJECT_DIR$/ongoing_training.py" />
         <option value="$PROJECT_DIR$/config_example.json" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/text_processing_examples.py" />
-        <option value="$PROJECT_DIR$/config.json" />
-        <option value="$PROJECT_DIR$/cognitive_architecture_validation.py" />
-        <option value="$PROJECT_DIR$/utils.py" />
-        <option value="$PROJECT_DIR$/intent_classification.py" />
         <option value="$PROJECT_DIR$/classifiers.py" />
         <option value="$PROJECT_DIR$/ongoing_training_process.py" />
+        <option value="$PROJECT_DIR$/bot_funcional_metrics.py" />
+        <option value="$PROJECT_DIR$/config.json" />
         <option value="$PROJECT_DIR$/text_processing_fns.py" />
+        <option value="$PROJECT_DIR$/text_processing_examples.py" />
+        <option value="$PROJECT_DIR$/intent_classification.py" />
+        <option value="$PROJECT_DIR$/cognitive_architecture_validation.py" />
+        <option value="$PROJECT_DIR$/borrar.py" />
+        <option value="$PROJECT_DIR$/utils.py" />
       </list>
     </option>
   </component>
@@ -189,7 +179,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.intent_classification">
+  <component name="RunManager" selected="Python.borrar">
+    <configuration name="borrar" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="NLP codes" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/borrar.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="cognitive_architecture_validation" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="NLP codes" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -203,27 +214,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cognitive_architecture_validation.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="examples" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="NLP codes" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="C:\Users\Administrator\Documents\NLP codes\text_processing_examples.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -274,12 +264,34 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="text_processing_examples" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="NLP codes" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/text_processing_examples.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.borrar" />
+        <item itemvalue="Python.cognitive_architecture_validation" />
+        <item itemvalue="Python.text_processing_examples" />
         <item itemvalue="Python.intent_classification" />
         <item itemvalue="Python.ongoing_training_process" />
-        <item itemvalue="Python.cognitive_architecture_validation" />
-        <item itemvalue="Python.examples" />
       </list>
     </recent_temporary>
   </component>
@@ -296,23 +308,32 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-1928" y="-312" width="1936" height="1056" extended-state="6" />
+    <frame x="-1368" y="-57" width="1376" height="744" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.09747102" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20029895" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.57204765" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3217768" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.34994584" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.45612136" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32936078" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32936078" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32936078" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="10" weight="0.47128928" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32569557" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -327,13 +348,8 @@
           <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/text_processing_fns.py</url>
-          <line>470</line>
-          <option name="timeStamp" value="41" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/intent_classification.py</url>
-          <line>31</line>
+          <line>33</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -342,19 +358,14 @@
           <option name="timeStamp" value="47" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils.py</url>
+          <url>file://$PROJECT_DIR$/../Deployment-flask-master/utils.py</url>
           <line>468</line>
           <option name="timeStamp" value="48" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils.py</url>
+          <url>file://$PROJECT_DIR$/../Deployment-flask-master/utils.py</url>
           <line>462</line>
           <option name="timeStamp" value="49" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/cognitive_architecture_validation.py</url>
-          <line>72</line>
-          <option name="timeStamp" value="51" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/ongoing_training_process.py</url>
@@ -362,24 +373,39 @@
           <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils.py</url>
+          <url>file://$PROJECT_DIR$/../Deployment-flask-master/utils.py</url>
           <line>283</line>
           <option name="timeStamp" value="55" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/intent_classification.py</url>
-          <line>14</line>
+          <line>16</line>
           <option name="timeStamp" value="56" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/text_processing_fns.py</url>
-          <line>579</line>
+          <line>597</line>
           <option name="timeStamp" value="57" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/text_processing_fns.py</url>
-          <line>465</line>
-          <option name="timeStamp" value="58" />
+          <line>482</line>
+          <option name="timeStamp" value="77" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/text_processing_fns.py</url>
+          <line>419</line>
+          <option name="timeStamp" value="78" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/utils.py</url>
+          <line>678</line>
+          <option name="timeStamp" value="120" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/utils.py</url>
+          <line>214</line>
+          <option name="timeStamp" value="121" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -387,123 +413,107 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
       <expression>
-        <expression-string>y_real_total = np.concatenate(y_real_total)
-y_pred_total = np.concatenate(y_pred_total)
-metrics = classification_report(y_pred_total, y_real_total, target_names=intent_names, output_dict=True)
-metrics.pop('micro avg', None)
-metrics.pop('weighted avg', None)
-fail_utterances = pd.concat(fail_utterances, ignore_index=True)
-# save results in excel file
-writer_metrics = pd.ExcelWriter('metrics_ML-model.xlsx', engine='xlsxwriter')
-writer_fails = pd.ExcelWriter('fail_utterances_ML-model.xlsx', engine='xlsxwriter')
-writer_fails.save()
-writer_metrics.save()</expression-string>
+        <expression-string>utterance_path = [pd.DataFrame.from_dict(vMainRouterOutput['intent_recognition'], orient='index').
+                      rename(index={'intent': 'main_router_output', 'score': 'score_main_router'}).T]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>print(classification_report(y_pred_total, y_real_total, target_names=intent_names))</expression-string>
+        <expression-string>sub_router_decision = pd.DataFrame([None, vGHRouterOutput['intent_recognition']['intent'],
+                                    vGHRouterOutput['intent_recognition']['score']],
+                                   index=['GH_router_entity', 'GH_router_intent', 'GH_router_score'])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>fails = pd.concat((utterances_val[errors_idx].reset_index(drop=True), intent_names_val[errors_idx].reset_index(drop=True),                 pd.DataFrame(encoder.inverse_transform(y_pred[errors_idx]), columns=['Predicted intent'])),               axis=1)</expression-string>
+        <expression-string>sub_router_decision = pd.DataFrame([None, GH_entities_recognition['intent_recognition']['intent'],
+                                    GH_entities_recognition['intent_recognition']['score']],
+                                   index=['GH_router_entity', 'GH_router_intent', 'GH_router_score'])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>best_kernel = best_svm_parameters['kernel'][0]
-best_c = best_svm_parameters['C'][0]
-best_gamma = best_svm_parameters['gamma'][0]</expression-string>
+        <expression-string>('cesantias' in GH_entities_recognition and len(GH_entities_recognition) == 1) or \
+                    (vGHRouterOutput['intent_recognition']['intent'] == '#nom_cesantias' and
+                     len(GH_entities_recognition) != 1)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>for i in idx[0]:
-    print(i)</expression-string>
+        <expression-string>if ('cesantias' in GH_entities_recognition and len(GH_entities_recognition) == 1) or \
+                    (vGHRouterOutput['intent_recognition']['intent'] == '#nom_cesantias' and
+                     len(GH_entities_recognition) != 1)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>columns_names = []
-for i in df['ongoing'].unique():    
-    columns_names.append('ongoing' + str(i))</expression-string>
+        <expression-string>(vGHRouterOutput['intent_recognition']['intent'] == '#nom_cesantias' and
+                     len(GH_entities_recognition) != 1)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>test = [len(df_intent[df_intent['ongoing'] == ong]) for ong in df['ongoing'].unique()]</expression-string>
+        <expression-string>vGHRouterOutput['intent_recognition']['intent'] == '#nom_cesantias' and
+                     len(GH_entities_recognition) != 1</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>unique_words.plot(kind='bar')
-plt.title(intent_name)
-plt.show()</expression-string>
+        <expression-string>(vGHRouterOutput['intent_recognition']['intent'] == '#nom_cesantias' 
+and len(GH_entities_recognition) != 1)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>for i in range(1, len(b)):
-        a = a + b[i]</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>for i in range(1, len(b)):
-    a = a + b[i]</expression-string>
+        <expression-string>utterances_paths = pd.concat((utterances_paths, vKnowledgeBase['Intent']), axis=1)
+utterances_paths.rename(columns={'Intent': 'real_intent'}, inplace=True)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
     </expressions>
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>list([&quot;['id','casa','carro']&quot;, &quot;['id2','casa2','carro3']&quot;])</expression-string>
+        <expression-string>writer.save()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>aa = [&quot;['id','casa','carro']&quot;, &quot;['id2','casa2','carro3']&quot;]</expression-string>
+        <expression-string>vKnowledgeBase['score'] = utterances_paths['score_final_output']</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>sum([['id','casa','carro'], ['id2','casa2','carro3']], [])</expression-string>
+        <expression-string>vKnowledgeBase.to_excel(writer)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>sum([['id','casa','carro'], ['id2','casa2','carro3'], [])</expression-string>
+        <expression-string>writer = pd.ExcelWriter('porgramas_gobierno_predictions.xlsx', engine='xlsxwriter')</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>sum(x, [])</expression-string>
+        <expression-string>vKnowledgeBase['pred_intent'] = utterances_paths['final_output']</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>x = [['A','B','C'], [1,2,3,4]]</expression-string>
+        <expression-string>utterances_paths = pd.concat(y_pred, ignore_index=True, sort=False)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>A = sum(x, [])</expression-string>
+        <expression-string>pd.concat(utterance_path, axis=1)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>x = [[&quot;a&quot;,&quot;b&quot;], [&quot;c&quot;]]</expression-string>
+        <expression-string>len(GH_entities_recognition) != 1</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>pd.read_excel(vNoAddPaths[key])</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>pd.read_excel(vPaths[key])</expression-string>
+        <expression-string>len(GH_entities_recognition) == 1</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -528,13 +538,6 @@ plt.show()</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="330" selection-start-line="330" selection-end-line="330" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/xlrd/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="110" selection-start-line="110" selection-end-line="110" />
         </state>
       </provider>
     </entry>
@@ -566,13 +569,6 @@ plt.show()</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="11" lean-forward="true" selection-start-column="11" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/pandas/core/internals/managers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="297">
@@ -580,55 +576,123 @@ plt.show()</expression-string>
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/pandas/core/indexing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36040">
+          <caret line="2138" selection-start-line="2138" selection-end-line="2138" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Deployment-flask-master/utils.py" />
+    <entry file="file://$PROJECT_DIR$/bot_funcional_metrics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/pandas/core/frame.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="47600">
-          <caret line="2893" selection-start-line="2893" selection-end-line="2893" />
+        <state relative-caret-position="616">
+          <caret line="1126" selection-start-line="1126" selection-end-line="1126" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/xlrd/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6018">
-          <caret line="369" column="72" selection-start-line="369" selection-start-column="72" selection-end-line="369" selection-end-column="72" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-            <element signature="e#9625#9714#0" />
-          </folding>
+        <state relative-caret-position="207">
+          <caret line="110" selection-start-line="110" selection-end-line="110" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/intent_classification.py">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1037">
-          <caret line="64" column="22" selection-start-line="64" selection-start-column="22" selection-end-line="64" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
+        <state>
+          <caret column="11" lean-forward="true" selection-start-column="11" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.json">
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/pandas/compat/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="53" selection-start-line="1" selection-start-column="53" selection-end-line="1" selection-end-column="53" />
+        <state relative-caret-position="181">
+          <caret line="221" selection-start-line="221" selection-end-line="221" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/classifiers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="39" column="23" selection-start-line="39" selection-start-column="23" selection-end-line="39" selection-end-column="23" />
+        <state relative-caret-position="51">
+          <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/text_processing_fns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="942">
+          <caret line="265" column="4" selection-start-line="265" selection-start-column="4" selection-end-line="265" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1044">
+          <caret line="531" column="70" selection-start-line="531" selection-start-column="70" selection-end-line="531" selection-end-column="70" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/borrar.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1377">
+          <caret line="98" column="37" selection-start-line="98" selection-start-column="37" selection-end-line="98" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#145#182#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/intent_classification.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-537">
+          <caret line="43" column="44" selection-start-line="43" selection-start-column="44" selection-end-line="43" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cognitive_architecture_validation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="884">
+          <caret line="106" selection-start-line="106" selection-end-line="106" />
+          <folding>
+            <element signature="e#1#20#0" expanded="true" />
+            <element signature="e#146#183#0" />
+            <element signature="e#3933#3934#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ongoing_training_process.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1054">
-          <caret line="62" selection-start-line="62" selection-end-line="62" />
+        <state relative-caret-position="1020">
+          <caret line="60" column="70" selection-start-line="60" selection-start-column="70" selection-end-line="60" selection-end-column="70" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
@@ -637,32 +701,10 @@ plt.show()</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/text_processing_examples.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="16" column="42" selection-start-line="16" selection-start-column="42" selection-end-line="16" selection-end-column="42" />
+        <state relative-caret-position="325">
+          <caret line="32" column="44" selection-start-line="32" selection-start-column="44" selection-end-line="32" selection-end-column="44" />
           <folding>
             <element signature="e#0#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cognitive_architecture_validation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="30" column="46" selection-start-line="30" selection-start-column="46" selection-end-line="30" selection-end-column="46" />
-          <folding>
-            <element signature="e#1#20#0" expanded="true" />
-            <element signature="e#237#364#0" />
-            <element signature="e#1929#1930#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/text_processing_fns.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="465" selection-start-line="465" selection-end-line="465" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -1,6 +1,7 @@
 from text_processing_fns import *
 import pandas as pd
 
+
 path = './KnowledgeBase.xlsx'
 vKnowledgeBase = pd.read_excel(path)
 
@@ -33,4 +34,7 @@ fn_word_frequency_analysis_fail_utterances(vPathKnowledgeBase, vPathSuccesFailFi
 
 vPathNoAddUtterances = 'C:/Users/Administrator/Documents/CHATBOT SOFY/Hipotecario/programas de gobierno/Refinamiento 1/' \
                        'Curacion/utterances_no_agregadas.xlsx'
+
+
+
 

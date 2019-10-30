@@ -285,6 +285,7 @@ def fn_calculate_word_frequency_per_intents(path, delete_stop_word=False, stemmi
 
     df = pd.read_excel(path)
     df["Intent"] = [remove_tilde(intent_name) for intent_name in df["Intent"]]
+    df["Intent"] = df["Intent"].apply(lambda row: row.strip())
     unique_intent = list(set(df["Intent"]))
 
     # df["Utterance"] = df["Utterance"].apply(lambda row: row.strip().lower())
@@ -345,7 +346,7 @@ def fn_calculate_word_frequency_per_intents(path, delete_stop_word=False, stemmi
         trigrams_final.to_excel(writer, sheet_name='trigrams frequency')
         writer.save()
 
-    return df_final
+    return df_final, bigrams_final, trigrams_final
 
 
 def fn_word_frequency_analysis_fail_utterances(vPathKnowledgeBase, vPathSuccesFailFile):
@@ -362,7 +363,7 @@ def fn_word_frequency_analysis_fail_utterances(vPathKnowledgeBase, vPathSuccesFa
 
       """
 
-    word_frequency = fn_calculate_word_frequency_per_intents(vPathKnowledgeBase)
+    word_frequency, bigrams_frequency, trigrams_frequency = fn_calculate_word_frequency_per_intents(vPathKnowledgeBase)
 
     df_fail_groups = pd.read_excel(vPathSuccesFailFile, sheet_name='fail_groups').sort_values(by=['score'],
                                                                                               ascending=False)
@@ -378,8 +379,19 @@ def fn_word_frequency_analysis_fail_utterances(vPathKnowledgeBase, vPathSuccesFa
         all_tables = []
         for i in range(0, len(intent_fail)):
 
-            all_tables.append(fn_get_word_frequency(word_frequency, intent_fail['utterance'][i], intent_fail['real_intent'][i],
-                                                 intent_fail['pred_intent'][i]))
+            all_tables.append(fn_get_word_frequency(word_frequency, intent_fail['utterance'][i],
+                                                    intent_fail['real_intent'][i],
+                                                    intent_fail['pred_intent'][i]))
+
+            all_tables.append(fn_get_word_frequency(bigrams_frequency, intent_fail['utterance'][i],
+                                                    intent_fail['real_intent'][i],
+                                                    intent_fail['pred_intent'][i],
+                                                    bigrams=True))
+
+            all_tables.append(fn_get_word_frequency(trigrams_frequency, intent_fail['utterance'][i],
+                                                    intent_fail['real_intent'][i],
+                                                    intent_fail['pred_intent'][i],
+                                                    trigrams=True))
 
         multiple_dfs_to_excel(all_tables, writer, intent[:17], 5)
 
@@ -406,10 +418,10 @@ def fn_calculate_total_utterances_per_intent(vPathKnowledgeBase, plot=False):
     for intent in intent_names:
 
         df_intent = df[df['Intent'] == intent]
-        df_ong = [len(df_intent[df_intent['ongoing'] == ong]) for ong in df['ongoing'].unique()]
+        df_ong = [len(df_intent[df_intent['Ongoing'] == ong]) for ong in df['Ongoing'].unique()]
         result.append(df_ong)
 
-    result = pd.DataFrame(result, index=intent_names, columns=['ongoing ' + str(i) for i in df['ongoing'].unique()])
+    result = pd.DataFrame(result, index=intent_names, columns=['Ongoing ' + str(i) for i in df['Ongoing'].unique()])
     result['Total'] = result.sum(axis=1)
 
     result = result.sort_values(by='Total', ascending=False)
@@ -466,9 +478,15 @@ def fn_calculate_total_utterances_tagged(vPathTaggedFile, excel=False):
     return vResult
 
 
-def fn_get_word_frequency(df_wordfreq, utterance, real_intent, pred_intent):
+def fn_get_word_frequency(df_wordfreq, utterance, real_intent, pred_intent, bigrams=False, trigrams=False):
 
     words = utterance.split(' ')
+
+    if bigrams:
+        words = list(nltk.bigrams(words))
+
+    if trigrams:
+        words = list(nltk.trigrams(words))
 
     return df_wordfreq.loc[words, [real_intent, pred_intent]]
 
@@ -554,7 +572,7 @@ def fn_utterances_similarity_between_intents(vPathKnowledgeBase, vThreshold, out
                                        cosine_data), axis=1).sort_values(by='Jaccard', ascending=False)
 
             df_final.append(df_contenated[['Intent to compare', 'To compare', 'Utterance', 'Intent', 'Jaccard', 'Cosine',
-                               'index', 'ongoing']])
+                               'index', 'Ongoing']])
 
     df_final = pd.concat(df_final)
     df_final.to_excel(writer)

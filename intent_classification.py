@@ -11,6 +11,8 @@ from sklearn.metrics import f1_score
 
 " LOAD DATA BASE"
 vPathKnowledgeBase = './KnowledgeBase.xlsx'
+
+
 #
 KnowledgeBase = pd.read_excel(vPathKnowledgeBase)
 
