@@ -1,20 +1,20 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-# from sklearn import preprocessing
+import scipy as sp
 import nltk
-import numpy as np
-from keras import layers, models, optimizers
 from sklearn.metrics.pairwise import cosine_similarity
 from matplotlib import rcParams
 from utils import *
 import unicodedata
+import sys
 rcParams.update({'figure.autolayout': True})
 
+
+# TEXT PROCESSING FUNCTIONS
 
 def count_words(vKnowledgeBase):
 
@@ -649,19 +649,54 @@ def fn_utterances_similarity_two_docs(path_doc1, path_doc2, output_file_name):
     writer.save()
 
 
-def create_nn_model_architecture(input_size):
-    # create input layer
-    input_layer = layers.Input((input_size,), sparse=True)
+def dist_raw(v1, v2):
+    delta = v1-v2
+    return sp.linalg.norm(delta.toarray())
 
-    # create hidden layer
-    hidden_layer = layers.Dense(100, activation="relu")(input_layer)
 
-    # create output layer
-    output_layer = layers.Dense(11, activation="sigmoid")(hidden_layer)
+def dist_norm(v1, v2):
+    v1_normalized = v1 / sp.linalg.norm(v1.toarray())
+    v2_normalized = v2 / sp.linalg.norm(v2.toarray())
 
-    classifier = models.Model(inputs=input_layer, outputs=output_layer)
-    classifier.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
-    return classifier
+    delta = v1_normalized - v2_normalized
+
+    return sp.linalg.norm(delta.toarray())
+
+
+def similarity_measurement(num_samples, posts, new_post, new_post_vec, X_train, norm=False):
+
+    best_i = None
+    best_dist = sys.maxsize
+
+    if norm is True:
+        dist = dist_norm
+    else:
+        dist = dist_raw
+
+    for i in range(0, num_samples):
+
+        post = posts[i]
+        if post == new_post:
+            continue
+        post_vec = X_train.getrow(i)
+        d = dist(post_vec, new_post_vec)
+
+        print("=== Post %i with dist=%.2f: %s" % (i, d, post))
+
+        if d < best_dist:
+            best_dist = d
+            best_i = i
+
+    print("Best post is %i with dist=%.2f" % (best_i, best_dist))
+    return best_i, best_dist
+
+
+def tfidf(t, d, D):
+    tf = float(d.count(t)) / sum(d.count(w) for w in set(d))
+    idf = sp.log(float(len(D)) / (len([doc for doc in D if t in doc])))
+    return tf * idf
+
+
 
 
 

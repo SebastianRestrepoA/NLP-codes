@@ -3,6 +3,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
+from keras import layers, models, optimizers
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import validation_curve
@@ -60,4 +61,40 @@ def fn_search_best_svm_classifier(x, y, nfolds, feature_name, display_results=Fa
         print('------------------------------------------------------------------------')
 
     return best_results.reset_index(drop=True)
+
+
+def create_nn_model_architecture(input_size):
+    # create input layer
+    input_layer = layers.Input((input_size,), sparse=True)
+
+    # create hidden layer
+    hidden_layer = layers.Dense(100, activation="relu")(input_layer)
+
+    # create output layer
+    output_layer = layers.Dense(11, activation="sigmoid")(hidden_layer)
+
+    classifier = models.Model(inputs=input_layer, outputs=output_layer)
+    classifier.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy')
+    return classifier
+
+
+def train_model(classifier, feature_vector_train, label, feature_vector_val, label_val, intent_name, is_neural_net=False):
+    # fit the training dataset on the classifier
+    classifier.fit(feature_vector_train, label)
+
+    # predict the labels on validation dataset
+    predictions = classifier.predict(feature_vector_val)
+
+    if is_neural_net:
+        predictions = predictions.argmax(axis=-1)
+
+    m = classification_report(label_val, predictions, output_dict=True)
+    m.pop('macro avg', None)
+    m.pop('micro avg', None)
+    m.pop('weighted avg', None)
+    df = pd.DataFrame.from_dict(m, orient='index')
+    df.index = intent_name
+    df = df.drop('support', axis=1)
+
+    return df
 

@@ -1,88 +1,12 @@
-import os
-import sys
-import scipy as sp
 import pandas as pd
 import string
 import json
-import re
 import datetime
 import xlsxwriter
 import pickle
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn import preprocessing
-from sklearn.metrics import classification_report
 import zipfile
 import requests
-
-
-def dist_raw(v1, v2):
-    delta = v1-v2
-    return sp.linalg.norm(delta.toarray())
-
-
-def dist_norm(v1, v2):
-    v1_normalized = v1 / sp.linalg.norm(v1.toarray())
-    v2_normalized = v2 / sp.linalg.norm(v2.toarray())
-
-    delta = v1_normalized - v2_normalized
-
-    return sp.linalg.norm(delta.toarray())
-
-
-def similarity_measurement(num_samples, posts, new_post, new_post_vec, X_train, norm=False):
-
-    best_i = None
-    best_dist = sys.maxsize
-
-    if norm is True:
-        dist = dist_norm
-    else:
-        dist = dist_raw
-
-    for i in range(0, num_samples):
-
-        post = posts[i]
-        if post == new_post:
-            continue
-        post_vec = X_train.getrow(i)
-        d = dist(post_vec, new_post_vec)
-
-        print("=== Post %i with dist=%.2f: %s" % (i, d, post))
-
-        if d < best_dist:
-            best_dist = d
-            best_i = i
-
-    print("Best post is %i with dist=%.2f" % (best_i, best_dist))
-    return best_i, best_dist
-
-
-def tfidf(t, d, D):
-    tf = float(d.count(t)) / sum(d.count(w) for w in set(d))
-    idf = sp.log(float(len(D)) / (len([doc for doc in D if t in doc])))
-    return tf * idf
-
-
-def train_model(classifier, feature_vector_train, label, feature_vector_val, label_val, intent_name, is_neural_net=False):
-    # fit the training dataset on the classifier
-    classifier.fit(feature_vector_train, label)
-
-    # predict the labels on validation dataset
-    predictions = classifier.predict(feature_vector_val)
-
-    if is_neural_net:
-        predictions = predictions.argmax(axis=-1)
-
-    m = classification_report(label_val, predictions, output_dict=True)
-    m.pop('macro avg', None)
-    m.pop('micro avg', None)
-    m.pop('weighted avg', None)
-    df = pd.DataFrame.from_dict(m, orient='index')
-    df.index = intent_name
-    df = df.drop('support', axis=1)
-
-    return df
 
 
 def metrics_mean(df_results, intent_names, measure):
@@ -441,6 +365,7 @@ def fn_unzip_file(path_to_zip_file, directory_to_extract_to):
     zip_ref.close()
 
 
+# COGNITIVE ARCHITECTURE VALIDATION
 def fn_luis_response(url, key, utterance):
 
     headers = {

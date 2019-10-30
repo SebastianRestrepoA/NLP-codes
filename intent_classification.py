@@ -8,6 +8,7 @@ from sklearn.model_selection import StratifiedKFold
 import pandas as pd
 from sklearn.metrics import classification_report
 from sklearn.metrics import f1_score
+from sklearn import preprocessing
 
 " LOAD DATA BASE"
 vPathKnowledgeBase = './KnowledgeBase.xlsx'
